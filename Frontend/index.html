@@ -1,0 +1,2856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>GeoSentinel - Interactive Unified Command Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#004ac6",
+            "primary-container": "#2563eb",
+            "on-primary": "#ffffff",
+            "surface": "#f8f9ff",
+            "surface-dim": "#cbdbf5",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "surface-container": "#e5eeff",
+            "surface-container-high": "#dce9ff",
+            "surface-container-highest": "#d3e4fe",
+            "on-surface": "#0b1c30",
+            "on-surface-variant": "#434655",
+            "secondary": "#565e74",
+            "tertiary": "#006242",
+            "tertiary-container": "#007d55",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "on-error-container": "#93000a",
+            "outline": "#737686",
+            "outline-variant": "#c3c6d7"
+          },
+          fontFamily: {
+            sans: ["Public Sans", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    @layer base { html, body { margin: 0; padding: 0; } }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .screen-view { display: none; }
+    .screen-view.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-surface font-sans text-on-surface antialiased min-h-screen">
+
+  <!-- PERSISTENT TOP HEADER -->
+   <!-- ============================================================
+     GEOSENTINEL HEADER
+     ============================================================ -->
+<header
+  class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest
+         shadow-[0_1px_8px_rgba(0,0,0,0.06)]
+         border-b border-surface-container-high"
+>
+  <div class="h-16 w-full px-6 flex items-center gap-4">
+
+    <!-- LOGO -->
+    <div
+      class="flex items-center gap-3 min-w-max cursor-pointer"
+      onclick="navigateTo('dashboard')"
+    >
+      <img
+        src="assets/geosentinel-logo.png"
+        alt="GeoSentinel Logo"
+        class="h-12 w-auto object-contain"
+      />
+
+      <div class="hidden lg:flex flex-col">
+        <span class="font-bold text-lg text-primary tracking-tight">
+          GeoSentinel
+        </span>
+
+        <span class="text-[10px] text-on-surface-variant">
+          Landslide Early Warning & Spatial Intelligence
+        </span>
+      </div>
+    </div>
+
+
+    <!-- SEARCH -->
+    <div class="flex-1 max-w-xl relative">
+
+      <div
+        class="flex items-center gap-2
+               bg-surface-container-low
+               px-3 py-2
+               rounded-lg
+               border border-surface-container-high
+               cursor-text"
+        onclick="focusGlobalSearch()"
+      >
+        <span class="material-symbols-outlined text-secondary text-[20px]">
+          search
+        </span>
+
+        <input
+          id="global-search"
+          type="text"
+          class="w-full bg-transparent text-sm
+                 text-on-surface
+                 placeholder:text-outline
+                 focus:outline-none"
+          placeholder="Search districts, zones, villages..."
+          autocomplete="off"
+          oninput="handleGlobalSearch(this.value)"
+          onfocus="openSearchResults()"
+        />
+      </div>
+
+      <!-- SEARCH RESULTS -->
+      <div
+        id="global-search-results"
+        class="hidden absolute top-full left-0 right-0 mt-2
+               bg-surface-container-lowest
+               border border-surface-container-high
+               rounded-xl shadow-xl
+               overflow-hidden z-[100]"
+      >
+      </div>
+
+    </div>
+
+
+    <!-- LOCATION -->
+    <div class="relative">
+
+      <button
+        id="location-selector"
+        type="button"
+        onclick="toggleLocationMenu()"
+        class="flex items-center gap-2
+               px-3 py-2
+               rounded-lg
+               bg-surface-container
+               text-on-surface
+               text-sm font-medium
+               hover:bg-surface-container-high"
+      >
+        <span class="material-symbols-outlined text-primary text-[19px]">
+          location_on
+        </span>
+
+        <span id="current-location">
+          Kohima District, Nagaland
+        </span>
+
+        <span class="material-symbols-outlined text-secondary text-[18px]">
+          expand_more
+        </span>
+      </button>
+
+
+      <!-- LOCATION MENU -->
+      <div
+        id="location-menu"
+        class="hidden absolute right-0 top-full mt-2
+               w-80
+               bg-surface-container-lowest
+               border border-surface-container-high
+               rounded-xl
+               shadow-xl
+               z-[100]
+               overflow-hidden"
+      >
+
+        <div class="p-3 border-b border-surface-container">
+
+          <div
+            class="flex items-center gap-2
+                   bg-surface-container-low
+                   px-3 py-2
+                   rounded-lg"
+          >
+            <span class="material-symbols-outlined text-secondary">
+              search
+            </span>
+
+            <input
+              id="location-search"
+              type="text"
+              placeholder="Search district or location..."
+              class="w-full bg-transparent
+                     text-sm
+                     focus:outline-none"
+              oninput="filterLocations(this.value)"
+            />
+          </div>
+
+        </div>
+
+
+        <div class="px-4 py-3">
+
+          <div class="text-[10px] font-mono font-bold
+                      text-secondary uppercase mb-2">
+            Districts
+          </div>
+
+          <div
+            id="location-list"
+            class="max-h-72 overflow-y-auto space-y-1"
+          >
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- WARNING STATUS -->
+    <div
+      class="hidden xl:flex items-center gap-2
+             px-3 py-2
+             rounded-lg
+             bg-error-container
+             text-on-error-container"
+    >
+      <span class="material-symbols-outlined text-error text-[18px]">
+        warning
+      </span>
+
+      <span class="text-[11px] font-mono uppercase font-bold">
+        Level-3 Warning
+      </span>
+    </div>
+
+
+    <!-- PROFILE -->
+    <div class="relative">
+
+      <button
+        type="button"
+        onclick="toggleProfileMenu()"
+        class="flex items-center gap-2
+               hover:bg-surface-container
+               rounded-lg px-2 py-1.5"
+      >
+
+        <div class="hidden xl:flex flex-col text-right">
+
+          <span
+            id="profile-name"
+            class="text-xs font-bold text-on-surface"
+          >
+            Dr. S. Jamir
+          </span>
+
+          <span
+            id="profile-role"
+            class="text-[10px]
+                   text-on-surface-variant
+                   font-mono"
+          >
+            DDMA Kohima
+          </span>
+
+        </div>
+
+
+        <div
+          class="w-9 h-9
+                 rounded-full
+                 bg-primary
+                 flex items-center justify-center
+                 text-on-primary
+                 shadow-sm"
+        >
+          <span class="material-symbols-outlined text-[19px]">
+            person
+          </span>
+        </div>
+
+      </button>
+
+
+      <!-- PROFILE MENU -->
+      <div
+        id="profile-menu"
+        class="hidden absolute right-0 top-full mt-2
+               w-64
+               bg-surface-container-lowest
+               border border-surface-container-high
+               rounded-xl
+               shadow-xl
+               z-[100]
+               overflow-hidden"
+      >
+
+        <div class="p-4 border-b border-surface-container">
+
+          <div class="font-bold text-on-surface">
+            <span id="profile-menu-name">
+              Dr. S. Jamir
+            </span>
+          </div>
+
+          <div
+            id="profile-menu-role"
+            class="text-xs text-on-surface-variant mt-1"
+          >
+            DDMA Kohima
+          </div>
+
+        </div>
+
+
+        <div class="p-2">
+
+          <button
+            onclick="openProfileModal()"
+            class="w-full text-left px-3 py-2.5
+                   rounded-lg
+                   hover:bg-surface-container
+                   flex items-center gap-3 text-sm"
+          >
+            <span class="material-symbols-outlined text-primary">
+              person
+            </span>
+
+            View Profile
+          </button>
+
+
+          <button
+            onclick="openProfileModal()"
+            class="w-full text-left px-3 py-2.5
+                   rounded-lg
+                   hover:bg-surface-container
+                   flex items-center gap-3 text-sm"
+          >
+            <span class="material-symbols-outlined text-primary">
+              settings
+            </span>
+
+            Profile Settings
+          </button>
+
+
+          <button
+            onclick="openProfileModal()"
+            class="w-full text-left px-3 py-2.5
+                   rounded-lg
+                   hover:bg-surface-container
+                   flex items-center gap-3 text-sm"
+          >
+            <span class="material-symbols-outlined text-primary">
+              account_circle
+            </span>
+
+            Account Details
+          </button>
+
+
+          <div class="border-t border-surface-container my-2"></div>
+
+
+          <button
+            onclick="showToast('Logout is disabled in prototype mode')"
+            class="w-full text-left px-3 py-2.5
+                   rounded-lg
+                   hover:bg-error-container
+                   flex items-center gap-3 text-sm"
+          >
+            <span class="material-symbols-outlined text-error">
+              logout
+            </span>
+
+            Logout
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</header>
+
+  <!-- PERSISTENT SIDEBAR NAVIGATION -->
+  <aside class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-low z-40 flex flex-col justify-between pt-4 pb-4 border-r border-surface-container-high shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
+    <div class="flex flex-col gap-2">
+      <div class="px-5 pb-1 flex items-center justify-between">
+        <span class="text-[11px] font-mono text-secondary uppercase tracking-wider font-semibold">Operations Command</span>
+        <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono font-bold">LIVE HUB</span>
+      </div>
+      <nav class="flex flex-col gap-1 px-3" id="sidebar-nav">
+        <button onclick="navigateTo('dashboard')" data-nav="dashboard" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-medium text-left w-full bg-primary-container text-on-primary font-semibold shadow-sm">
+          <span class="material-symbols-outlined text-[20px]">dashboard</span>
+          <span>Dashboard</span>
+        </button>
+        <button onclick="navigateTo('risk-map')" data-nav="risk-map" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-medium text-left w-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface">
+          <span class="material-symbols-outlined text-[20px]">map</span>
+          <span>Risk Map</span>
+        </button>
+        <button onclick="navigateTo('risk-analysis')" data-nav="risk-analysis" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-medium text-left w-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface">
+          <span class="material-symbols-outlined text-[20px]">monitoring</span>
+          <span>Risk Analysis</span>
+        </button>
+        <button onclick="navigateTo('response-center')" data-nav="response-center" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-medium text-left w-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface">
+          <span class="material-symbols-outlined text-[20px]">emergency_home</span>
+          <span>Response Center</span>
+        </button>
+        <button onclick="navigateTo('alerts-warnings')" data-nav="alerts-warnings" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-medium text-left w-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface">
+          <span class="material-symbols-outlined text-[20px]">notifications_active</span>
+          <span>Alerts Dashboard</span>
+        </button>
+        <button onclick="navigateTo('field-reports')" data-nav="field-reports" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-medium text-left w-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface">
+          <span class="material-symbols-outlined text-[20px]">assignment</span>
+          <span>Field Reports</span>
+        </button>
+        <button onclick="navigateTo('scenario-simulator')" data-nav="scenario-simulator" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-medium text-left w-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface">
+          <span class="material-symbols-outlined text-[20px]">cyclone</span>
+          <span>Scenario Simulator</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Telemetry Status Box -->
+    <div class="px-4 pt-3 border-t border-surface-container">
+      <div class="p-3 rounded-lg bg-surface-container flex flex-col gap-1 border border-surface-container-high">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono text-on-surface-variant uppercase font-semibold">Telemetry Gateway</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        </div>
+        <span class="text-xs font-mono font-bold text-on-surface">GS-NE-GATEWAY-04</span>
+        <span class="text-[11px] text-secondary font-mono">Latency: 142ms • Sat-Mesh 99.4%</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+  <div class="pl-64 pt-16 flex flex-col min-h-screen">
+    <main class="flex-1 w-full p-6 pb-12 bg-surface">
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 1: DASHBOARD -->
+      <!-- ============================================================ -->
+      <section id="view-dashboard" class="screen-view active">
+        <div class="flex flex-col gap-6 max-w-7xl mx-auto">
+          
+          <!-- Banner -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest p-6 rounded-2xl border border-surface-container-high shadow-sm">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs font-mono text-primary font-semibold uppercase tracking-wider">NORTHEAST SPATIAL SURVEILLANCE • SDMA GATEWAY</span>
+                <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold">LIVE SYNC</span>
+              </div>
+              <h1 class="text-2xl lg:text-3xl font-bold text-on-surface">GeoSentinel AI Hyperlocal Landslide Early Warning</h1>
+              <p class="text-sm text-on-surface-variant mt-1 italic">“From environmental intelligence to actionable landslide response.”</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="navigateTo('risk-map')" class="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:opacity-95 shadow-sm flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">map</span>
+                <span>Open GIS Map</span>
+              </button>
+              <button onclick="openModal('alert-modal')" class="px-4 py-2 bg-error text-on-primary rounded-lg text-sm font-semibold hover:opacity-95 shadow-sm flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">emergency</span>
+                <span>Trigger Alert</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Metrics Bar -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm">
+              <div class="flex justify-between items-center text-xs text-secondary font-mono font-semibold">
+                <span>CRITICAL ZONES</span>
+                <span class="px-1.5 py-0.5 rounded bg-error-container text-on-error-container text-[10px] font-bold">L3 ALERT</span>
+              </div>
+              <div class="text-2xl font-bold text-error mt-2">
+  <span id="critical-zones-count">0</span>
+  <span class="text-xs text-secondary font-normal">+1 last 6h</span>
+</div>
+              <div class="text-xs text-on-surface-variant mt-1">Slope instability &gt;85%</div>
+            </div>
+
+            <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm">
+              <div class="flex justify-between items-center text-xs text-secondary font-mono font-semibold">
+                <span>HIGH RISK ZONES</span>
+                <span class="px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[10px] font-bold">MONITOR</span>
+              </div>
+              <div id="high-risk-zones-count" class="text-2xl font-bold text-on-surface mt-2">0 <span class="text-xs text-secondary font-normal">zones</span></div>
+              <div class="text-xs text-on-surface-variant mt-1">Dzükou &amp; NH-2 Corridor</div>
+            </div>
+
+            <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm">
+              <div class="flex justify-between items-center text-xs text-secondary font-mono font-semibold">
+                <span>VILLAGES AT RISK</span>
+                <span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary text-[10px] font-bold">DEMO</span>
+              </div>
+              <div class="text-2xl font-bold text-on-surface mt-2">
+              <span id="villages-at-risk-count">0</span> 
+              <span class="text-xs text-secondary font-normal">~18,400 souls</span></div>
+              <div class="text-xs text-on-surface-variant mt-1">Within active runout zones</div>
+            </div>
+
+            <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm">
+              <div class="flex justify-between items-center text-xs text-secondary font-mono font-semibold">
+                <span>ROAD SEGMENTS</span>
+                <span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary text-[10px] font-bold">NH-29</span>
+              </div>
+              <div class="text-2xl font-bold text-on-surface mt-2">
+  <span id="road-segments-count">0</span>
+  <span class="text-xs text-secondary font-normal">Chokepoints</span>
+</div>
+              <div class="text-xs text-on-surface-variant mt-1">Single-lane convoys</div>
+            </div>
+            <!-- TOTAL EXPOSED POPULATION -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high">
+    <div class="flex justify-between items-center text-xs text-secondary">
+        <span>EXPOSED POPULATION</span>
+        <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary">
+            LIVE
+        </span>
+    </div>
+
+    <div class="text-2xl font-bold text-on-surface mt-2">
+        <span id="total-exposed-population">0</span>
+    </div>
+
+    <div class="text-xs text-secondary mt-1">
+        Residents across monitored zones
+    </div>
+</div>
+
+            <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm">
+              <div class="flex justify-between items-center text-xs text-secondary font-mono font-semibold">
+                <span>ACTIVE ALERTS</span>
+                <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary text-[10px] font-bold font-mono">CAP-IN</span>
+              </div>
+              <div class="text-2xl font-bold text-primary mt-2">
+  <span id="active-alerts-count">0</span>
+  <span class="text-xs text-secondary font-normal">Dispatches</span>
+</div>
+              <div class="text-xs text-on-surface-variant mt-1">3 Evacuation orders live</div>
+            </div>
+          </div>
+
+          <!-- Interactive Dashboard Map & Threat Feed -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left: GIS Map with High-Risk Clickable Hotspot -->
+            <div class="lg:col-span-8 bg-surface-container-lowest rounded-2xl border border-surface-container-high shadow-sm overflow-hidden flex flex-col">
+              <div class="px-4 py-3 bg-surface-container-low border-b border-surface-container flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-[18px]">satellite_alt</span>
+                  <span class="text-xs font-mono font-bold uppercase text-on-surface">GIS Spatial Risk Matrix (EPSG:4326 Kohima Corridor)</span>
+                </div>
+                <span class="text-[11px] text-secondary font-mono">Click any critical sector for deep analysis</span>
+              </div>
+
+              <!-- Map Simulation Container -->
+              <div class="relative w-full h-[400px] bg-slate-100 overflow-hidden select-none">
+                <!-- SVG map contours and features -->
+                <svg class="w-full h-full" viewBox="0 0 800 400" preserveAspectRatio="none">
+                  <defs>
+                    <radialGradient id="dash-crit-grad" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.8"/>
+                      <stop offset="60%" stop-color="#f97316" stop-opacity="0.4"/>
+                      <stop offset="100%" stop-color="#ea580c" stop-opacity="0"/>
+                    </radialGradient>
+                  </defs>
+                  <!-- Background grid -->
+                  <pattern id="dash-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(148, 163, 184, 0.15)" stroke-width="1"/>
+                  </pattern>
+                  <rect width="100%" height="100%" fill="url(#dash-grid)"/>
+                  <!-- Contours -->
+                  <path d="M 50 120 Q 200 60 400 160 T 750 140" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+                  <path d="M 30 220 Q 250 140 450 260 T 780 220" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+                  <path d="M 10 320 Q 300 240 500 340 T 800 310" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+                  <!-- Arterial Highway NH-29 -->
+                  <path d="M 50 360 C 220 310 380 260 460 210 S 640 140 760 90" fill="none" stroke="#2563eb" stroke-width="5" stroke-linecap="round"/>
+                  <path d="M 50 360 C 220 310 380 260 460 210 S 640 140 760 90" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="6 6"/>
+                  
+                  <!-- Hotspot Ellipse: Kohima South Sector -->
+                  <ellipse cx="460" cy="210" rx="90" ry="60" fill="url(#dash-crit-grad)"/>
+                  <circle cx="460" cy="210" r="16" fill="rgba(239, 68, 68, 0.3)" class="animate-ping"/>
+                  <circle cx="460" cy="210" r="7" fill="#dc2626" stroke="#ffffff" stroke-width="2"/>
+                </svg>
+
+                <!-- Interactive Map Pin 1: CRITICAL SECTOR (Clickable -> Risk Analysis) -->
+                <div onclick="navigateToRiskAnalysis('Kohima South Sector (NH-29 Bypass)')" class="absolute left-[360px] top-[140px] z-20 cursor-pointer group transition-transform hover:scale-105">
+                  <div class="bg-surface-container-lowest/95 backdrop-blur-md p-2.5 rounded-xl shadow-xl border-2 border-error flex flex-col gap-1 max-w-[210px]">
+                    <div class="flex items-center justify-between">
+                      <span class="px-1.5 py-0.5 rounded bg-error text-on-primary text-[10px] font-mono font-bold uppercase animate-pulse">Critical 88/100</span>
+                      <span class="text-[10px] text-secondary font-mono">km 14.8</span>
+                    </div>
+                    <span class="text-xs font-bold text-on-surface leading-tight">Kohima South Sector</span>
+                    <span class="text-[10px] text-error font-medium">Click to open Risk Analysis →</span>
+                  </div>
+                </div>
+
+                <!-- Interactive Map Pin 2: Dzükou Approach -->
+                <div onclick="navigateToRiskAnalysis('Dzükou Approach Slope')" class="absolute left-[150px] top-[240px] z-10 cursor-pointer group transition-transform hover:scale-105">
+                  <div class="bg-surface-container-lowest/90 backdrop-blur p-2 rounded-lg shadow-md border border-orange-300 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                    <span class="text-xs font-semibold text-on-surface">Dzükou Slope (79/100)</span>
+                  </div>
+                </div>
+
+                <!-- Floating Legend -->
+                <div class="absolute bottom-3 left-3 bg-surface-container-lowest/90 backdrop-blur p-2.5 rounded-lg border border-surface-container text-xs flex items-center gap-3">
+                  <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-red-600"></span><span class="text-[11px] font-mono">Critical (&gt;85)</span></div>
+                  <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-orange-500"></span><span class="text-[11px] font-mono">High (70-84)</span></div>
+                  <div class="flex items-center gap-1.5"><span class="w-4 h-1 bg-blue-600"></span><span class="text-[11px] font-mono">NH-29 Lifeline</span></div>
+                </div>
+              </div>
+
+              <!-- Map Footer Bar -->
+              <div class="px-4 py-3 bg-surface-container-low border-t border-surface-container flex items-center justify-between text-xs text-on-surface-variant">
+                <span>Piezometers: 14/14 Active • Doppler Rain Gauges Synced • Gateways Ping: 9ms</span>
+                <button onclick="navigateTo('risk-map')" class="text-primary font-bold hover:underline">Launch Full GIS Risk Map →</button>
+              </div>
+            </div>
+
+            <!-- Right: Priority Threat Clusters list -->
+            <div class="lg:col-span-4 flex flex-col gap-3">
+              <div class="bg-surface-container-lowest p-4 rounded-2xl border border-surface-container-high shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-mono uppercase font-bold text-secondary">Threat Prioritization</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-error-container text-on-error-container font-mono font-bold">URGENT</span>
+                </div>
+
+                <!-- Threat Item 1 -->
+                <div onclick="navigateToRiskAnalysis('Kohima South Sector (NH-29 Bypass)')" class="p-3 rounded-xl bg-error-container/20 border border-error/30 hover:border-error cursor-pointer transition-all mb-2.5 group">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="text-xs font-bold text-error">#01 Kohima South Sector</span>
+                      <p class="text-xs text-on-surface mt-0.5">NH-29 Bypass km 14.8 • High InSAR creep</p>
+                    </div>
+                    <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-error text-on-primary">88/100</span>
+                  </div>
+                  <div class="flex items-center justify-between mt-2 pt-2 border-t border-error/20 text-[11px] text-secondary">
+                    <span>6 villages exposed</span>
+                    <span class="text-primary font-bold group-hover:underline">Open Risk Analysis →</span>
+                  </div>
+                </div>
+
+                <!-- Threat Item 2 -->
+                <div onclick="navigateToRiskAnalysis('Dzükou Approach Slope')" class="p-3 rounded-xl bg-orange-50 border border-orange-200 hover:border-orange-400 cursor-pointer transition-all mb-2.5 group">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="text-xs font-bold text-orange-800">#02 Dzükou Approach Slope</span>
+                      <p class="text-xs text-on-surface mt-0.5">Steep scarp saturation index &gt; 0.78</p>
+                    </div>
+                    <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-orange-500 text-white">79/100</span>
+                  </div>
+                  <div class="flex items-center justify-between mt-2 pt-2 border-t border-orange-200 text-[11px] text-secondary">
+                    <span>4 villages • 1 bridge span</span>
+                    <span class="text-primary font-bold group-hover:underline">Analyze →</span>
+                  </div>
+                </div>
+
+                <!-- Threat Item 3 -->
+                <div onclick="navigateToRiskAnalysis('Zubza Riverbank Cut')" class="p-3 rounded-xl bg-amber-50 border border-amber-200 hover:border-amber-400 cursor-pointer transition-all group">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="text-xs font-bold text-amber-800">#03 Zubza Riverbank Cut</span>
+                      <p class="text-xs text-on-surface mt-0.5">Toe erosion over 380m stretch</p>
+                    </div>
+                    <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-amber-500 text-white">76/100</span>
+                  </div>
+                  <div class="flex items-center justify-between mt-2 pt-2 border-t border-amber-200 text-[11px] text-secondary">
+                    <span>3 villages • NH-29 Main</span>
+                    <span class="text-primary font-bold group-hover:underline">Analyze →</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Launch Card to Response Center -->
+              <div class="bg-surface-container-low p-4 rounded-2xl border border-surface-container flex flex-col justify-between">
+                <div>
+                  <span class="text-xs font-mono font-bold text-primary uppercase">Decision Support</span>
+                  <h4 class="text-sm font-bold text-on-surface mt-1">Multi-Agency Mobilization Dispatch</h4>
+                  <p class="text-xs text-on-surface-variant mt-1">Pre-position SDRF teams, activate sirens, and initiate village evacuation protocols.</p>
+                </div>
+                <button onclick="navigateTo('response-center')" class="mt-3 w-full py-2 bg-primary-container text-on-primary rounded-lg text-xs font-semibold hover:opacity-95 flex items-center justify-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px]">forward</span>
+                  <span>Go to Response Center</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 2: RISK MAP (FULL GIS) -->
+      <!-- ============================================================ -->
+      <section id="view-risk-map" class="screen-view">
+        <div class="flex flex-col gap-4 max-w-7xl mx-auto">
+          <!-- Control bar -->
+          <div class="flex flex-wrap items-center justify-between gap-3 bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary text-[22px]">map</span>
+              <div>
+                <h2 class="text-lg font-bold text-on-surface">Tactical Spatial Command (GIS Risk Map)</h2>
+                <span class="text-xs text-secondary font-mono">EPSG:3857 (WGS 84) • Grid: Kohima-Sector-Alpha-09</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-semibold text-secondary">Filter Risk:</span>
+              <button class="px-2.5 py-1 rounded text-xs font-mono font-bold bg-error text-on-primary">Critical (3)</button>
+              <button class="px-2.5 py-1 rounded text-xs font-mono font-bold bg-surface-container text-on-surface hover:bg-surface-container-high">High (12)</button>
+              <button class="px-2.5 py-1 rounded text-xs font-mono font-bold bg-surface-container text-on-surface hover:bg-surface-container-high">Moderate</button>
+            </div>
+          </div>
+
+          <!-- Map Layout: Sidebar Layer Toggles + Big Map + Inspector -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <!-- Layers Column -->
+            <div class="lg:col-span-3 bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm flex flex-col gap-3">
+              <span class="text-xs font-mono uppercase font-bold text-secondary">Spatial Data Layers</span>
+              <div class="flex flex-col gap-2 text-xs">
+                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-surface-container-low">
+                  <input type="checkbox" checked class="rounded accent-primary"/>
+                  <span class="font-medium text-on-surface">Landslide Heatmap (AI v4.2)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-surface-container-low">
+                  <input type="checkbox" checked class="rounded accent-primary"/>
+                  <span class="font-medium text-on-surface">IMD Doppler Precip Radar</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-surface-container-low">
+                  <input type="checkbox" checked class="rounded accent-primary"/>
+                  <span class="font-medium text-on-surface">Slope DEM Contours (&gt;30°)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-surface-container-low">
+                  <input type="checkbox" checked class="rounded accent-primary"/>
+                  <span class="font-medium text-on-surface">NH-29 Arterial Highway</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-surface-container-low">
+                  <input type="checkbox" checked class="rounded accent-primary"/>
+                  <span class="font-medium text-on-surface">Sentinel-1 InSAR Vectors</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-surface-container-low">
+                  <input type="checkbox" checked class="rounded accent-primary"/>
+                  <span class="font-medium text-on-surface">Village Habitations</span>
+                </label>
+              </div>
+              <div class="pt-3 border-t border-surface-container">
+                <span class="text-[11px] text-secondary font-mono">Legend Opacity Control</span>
+                <input type="range" class="w-full accent-primary mt-1" value="85"/>
+              </div>
+            </div>
+
+            <!-- Map Viewport -->
+<div class="lg:col-span-6 bg-slate-200 rounded-xl border border-surface-container-high shadow-sm relative h-[500px] overflow-hidden">
+
+  <!-- SVG Map -->
+  <svg
+    class="w-full h-full"
+    viewBox="0 0 600 500"
+    preserveAspectRatio="none"
+  >
+    <defs>
+      <radialGradient id="map-crit-grad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#dc2626" stop-opacity="0.85"/>
+        <stop offset="50%" stop-color="#f97316" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#ea580c" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Background -->
+    <rect
+      width="100%"
+      height="100%"
+      fill="#f1f5f9"
+    />
+
+    <!-- Topographic curves -->
+    <path
+      d="M 0 150 Q 200 90 400 200 T 600 170"
+      fill="none"
+      stroke="#cbd5e1"
+      stroke-width="1.5"
+    />
+
+    <path
+      d="M 0 250 Q 250 180 450 300 T 600 260"
+      fill="none"
+      stroke="#cbd5e1"
+      stroke-width="1.5"
+    />
+
+    <path
+      d="M 0 350 Q 300 280 500 390 T 600 360"
+      fill="none"
+      stroke="#cbd5e1"
+      stroke-width="1.5"
+    />
+
+    <!-- NH-29 Highway -->
+    <path
+      d="M 40 460 C 200 400 350 330 420 260 S 500 160 580 100"
+      fill="none"
+      stroke="#2563eb"
+      stroke-width="6"
+      stroke-linecap="round"
+    />
+
+    <path
+      d="M 40 460 C 200 400 350 330 420 260 S 500 160 580 100"
+      fill="none"
+      stroke="#ffffff"
+      stroke-width="2"
+      stroke-dasharray="6 6"
+    />
+
+    <!-- Hazard Cone -->
+    <ellipse
+      cx="420"
+      cy="260"
+      rx="95"
+      ry="65"
+      fill="url(#map-crit-grad)"
+    />
+
+    <circle
+      cx="420"
+      cy="260"
+      r="14"
+      fill="#dc2626"
+      class="animate-ping"
+    />
+
+    <circle
+      cx="420"
+      cy="260"
+      r="7"
+      fill="#ffffff"
+      stroke="#dc2626"
+      stroke-width="3"
+    />
+  </svg>
+
+  <!-- Dynamic Risk Zone Markers -->
+  <div
+    id="dynamic-risk-markers"
+    class="absolute inset-0 pointer-events-none"
+  ></div>
+
+</div>
+
+            <!-- Selected Zone Inspector -->
+            <div class="lg:col-span-3 bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between pb-2 border-b border-surface-container">
+                  <span class="text-xs font-mono uppercase font-bold text-secondary">Zone Inspector</span>
+                  <span class="px-2 py-0.5 rounded bg-error-container text-on-error-container text-[10px] font-mono font-bold uppercase">HIGH RISK</span>
+                </div>
+                <h3 id="risk-zone-name" class="text-base font-bold text-on-surface mt-3">KOHIMA - ZONE A</h3>
+                <span class="text-xs text-secondary">South Ridge / NH-29 Bypass Lifeline</span>
+
+                <div class="my-4 p-3 rounded-lg bg-orange-50 border border-orange-200">
+                  <div class="flex justify-between items-baseline">
+                    <span class="text-3xl font-extrabold text-orange-600"><span id="risk-score">82</span><span class="text-xs text-secondary">/ 100</span></span>
+                    <span id="risk-confidence" class="text-xs font-mono font-bold text-orange-800">87% AI Conf.</span>
+                  </div>
+                  <span class="text-xs text-on-surface-variant block mt-1">Hazard Index Breached Threshold</span>
+                </div>
+
+                <div class="space-y-2 text-xs text-on-surface-variant">
+                  <strong id="risk-rainfall" class="text-on-surface">128 mm (Crit &gt;95)</strong>
+                  <div class="flex justify-between"><span>Slope Incline:</span><strong id="risk-slope" class="text-on-surface">34.2° (Unstable)</strong></div>
+                  <div class="flex justify-between"><span>InSAR Creep:</span><strong id="risk-insar" class="text-error font-mono">4.8 mm/h</strong>
+                  <div class="flex justify-between"><span>Exposed Souls:</span><strong id="risk-population" class="text-on-surface">2,450 residents</strong></div>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-2 pt-4 border-t border-surface-container">
+                <button onclick="navigateTo('risk-analysis')" class="w-full py-2 bg-primary text-on-primary rounded-lg text-xs font-semibold hover:opacity-95 shadow-sm flex items-center justify-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px]">monitoring</span>
+                  <span>Detailed AI Risk Analysis</span>
+                </button>
+                <button onclick="navigateTo('response-center')" class="w-full py-2 bg-error text-on-primary rounded-lg text-xs font-semibold hover:opacity-95 shadow-sm flex items-center justify-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px]">emergency_share</span>
+                  <span>Prioritize &amp; Dispatch</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 3: AI RISK ANALYSIS & EXPLAINABLE AI -->
+      <!-- ============================================================ -->
+      <section id="view-risk-analysis" class="screen-view">
+        <div class="flex flex-col gap-6 max-w-7xl mx-auto">
+          
+          <!-- Header banner with Breadcrumbs -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest p-6 rounded-2xl border border-surface-container-high shadow-sm">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs font-mono text-primary font-bold uppercase">XAI DECISION ENGINE • GeoSentinel-Core v3.4</span>
+                <span class="px-2 py-0.5 rounded bg-error-container text-on-error-container text-[10px] font-mono font-bold">HIGH RISK ZONE A</span>
+              </div>
+              <h1 class="text-2xl font-bold text-on-surface" id="risk-analysis-title">AI Risk Analysis &amp; Contributing Factors: Kohima South Ridge</h1>
+              <p class="text-sm text-on-surface-variant mt-1">TreeSHAP feature importance &amp; physics-informed limit equilibrium modeling (25.6744° N, 94.1082° E).</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <!-- Requirement: "On Risk Analysis, 'View Affected Assets' should open the relevant exposure/response information" -->
+              <button onclick="navigateTo('response-center')" class="px-4 py-2 bg-primary-container text-on-primary rounded-lg text-sm font-semibold hover:opacity-95 shadow-sm flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">groups</span>
+                <span>View Affected Assets →</span>
+              </button>
+              <button onclick="showToast('Downloading AI Audit Dossier (PDF)...')" class="px-3 py-2 bg-surface-container text-on-surface rounded-lg text-sm font-medium hover:bg-surface-container-high flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[18px]">download</span>
+                <span>Audit Dossier</span>
+              </button>
+              </div>
+ </div>
+
+
+ <!-- Computed Metric & Shapley Breakdown -->
+ <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left: Composite Risk Gauge -->
+            <div class="lg:col-span-4 bg-surface-container-lowest p-6 rounded-2xl border border-surface-container-high shadow-sm flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-mono uppercase font-bold text-secondary">Computed Hazard Metric</span>
+                <div class="flex flex-col items-center my-6">
+                  <div class="w-32 h-32 relative flex items-center justify-center">
+                    <svg class="w-32 h-32 -rotate-90" viewBox="0 0 36 36">
+                      <path class="text-surface-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+                      <path class="text-error" stroke-dasharray="82, 100" stroke-linecap="round" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+                    </svg>
+                    <div class="absolute flex flex-col items-center">
+                      <span class="text-3xl font-extrabold text-on-surface">82</span>
+                      <span class="text-[10px] font-mono font-bold text-error uppercase">HIGH RISK</span>
+                    </div>
+                  </div>
+                  <span class="text-xs text-secondary font-mono mt-1">Confidence Interval: 87% (High)</span>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-lg bg-surface-container-low text-xs text-on-surface-variant border border-surface-container">
+                <span>Physics-informed cross validation against 14 years of Kohima district slope displacement data.</span>
+              </div>
+            </div>
+
+            <!-- Right: TreeSHAP Attribution Bars -->
+            <div class="lg:col-span-8 bg-surface-container-lowest p-6 rounded-2xl border border-surface-container-high shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between pb-3 border-b border-surface-container">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-[20px]">account_tree</span>
+                    <span class="text-sm font-bold text-on-surface">Risk Contributors &amp; Shapley Weights (TreeSHAP)</span>
+                  </div>
+                  <span class="text-xs font-mono text-secondary">Σ SHAP = +3.84 log-odds</span>
+                </div>
+
+                <div class="space-y-4 mt-4">
+                  <!-- Bar 1 -->
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="font-bold text-on-surface">Heavy Antecedent &amp; 24h Cumulative Rainfall</span>
+                      <span class="text-error font-mono font-bold">42% weight (128mm vs 95mm threshold)</span>
+                    </div>
+                    <div class="w-full h-2.5 rounded-full bg-surface-container overflow-hidden">
+                      <div class="h-full bg-error rounded-full" style="width: 78%;"></div>
+                    </div>
+                  </div>
+
+                  <!-- Bar 2 -->
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="font-bold text-on-surface">Steep Slope Gradient (&gt;30° Fail Angle)</span>
+                      <span class="text-orange-600 font-mono font-bold">31% weight (Measured: 34.2°)</span>
+                    </div>
+                    <div class="w-full h-2.5 rounded-full bg-surface-container overflow-hidden">
+                      <div class="h-full bg-orange-500 rounded-full" style="width: 62%;"></div>
+                    </div>
+                  </div>
+
+                  <!-- Bar 3 -->
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="font-bold text-on-surface">Historical Landslide Recurrence</span>
+                      <span class="text-secondary font-mono font-bold">18% weight (17 events in 250m grid)</span>
+                    </div>
+                    <div class="w-full h-2.5 rounded-full bg-surface-container overflow-hidden">
+                      <div class="h-full bg-secondary rounded-full" style="width: 44%;"></div>
+                    </div>
+                  </div>
+
+                  <!-- Bar 4 -->
+                  <div>
+                    <div class="flex justify-between text-xs mb-1">
+                      <span class="font-bold text-on-surface">Soil Saturation &amp; Weathered Lithology (Disang Shale)</span>
+                      <span class="text-emerald-700 font-mono font-bold">9% weight</span>
+                    </div>
+                    <div class="w-full h-2.5 rounded-full bg-surface-container overflow-hidden">
+                      <div class="h-full bg-emerald-600 rounded-full" style="width: 25%;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recommendation Card -->
+              <div class="mt-6 p-4 rounded-xl bg-surface-container-low border border-surface-container flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-primary text-[24px]">verified_user</span>
+                  <div class="text-xs">
+                    <span class="font-bold text-on-surface block">Explainable AI Synthesis Recommendation:</span>
+                    <span class="text-on-surface-variant">Immediate geotechnical stabilization check, vehicular diversion off NH-29 South, and pre-alerting VDMC headmen.</span>
+                  </div>
+                </div>
+                <button onclick="navigateTo('response-center')" class="px-3.5 py-1.5 bg-primary text-on-primary rounded-lg text-xs font-semibold shrink-0">
+                  Proceed to Response Center →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 4: RESPONSE CENTER -->
+      <!-- ============================================================ -->
+      <section id="view-response-center" class="screen-view">
+        <div class="flex flex-col gap-6 max-w-7xl mx-auto">
+          
+          <!-- Header -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest p-6 rounded-2xl border border-surface-container-high shadow-sm">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs font-mono text-primary font-bold uppercase">DECISIONAL COMMAND EOC • SEC-OPS CODE: NE-TRIAGE-8821</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold">ACTIVE DEPLOYMENT</span>
+              </div>
+              <h1 class="text-2xl font-bold text-on-surface">Emergency Response Prioritization &amp; Resource Deployment</h1>
+              <p class="text-sm text-on-surface-variant mt-1">Multi-criteria disaster exposure calculus: Response Priority = Risk Score × Population × Infrastructure Index.</p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <!-- Requirement: "On Response Center, 'Create Alert' should open the alert creation interface" -->
+              <button onclick="openModal('alert-modal')" class="px-4 py-2 bg-primary-container text-on-primary rounded-lg text-sm font-semibold hover:opacity-95 shadow-sm flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">notification_add</span>
+                <span>Create Alert</span>
+              </button>
+              <button onclick="showToast('Exporting SITREP Multi-Agency Dossier...')" class="px-3.5 py-2 bg-surface-container text-on-surface rounded-lg text-sm font-medium hover:bg-surface-container-high flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                <span>Export SITREP PDF</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Triage Columns -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left 8-cols: Ranked Threat Clusters -->
+            <div class="lg:col-span-8 flex flex-col gap-4">
+              <span class="text-xs font-mono uppercase font-bold text-secondary">Ranked Threat Clusters (Multi-Hazard Impact)</span>
+
+              <!-- Priority Card 1 -->
+              <div class="bg-surface-container-lowest p-5 rounded-2xl border-2 border-error/50 shadow-sm flex flex-col gap-3">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 rounded bg-error text-on-primary text-[10px] font-mono font-bold uppercase">Priority 01 Critical</span>
+                      <span class="text-xs text-secondary font-mono">High InSAR Creep</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-on-surface mt-1">Kohima Zone A (South Ridge / NH-29 Bypass)</h3>
+                    <span class="text-xs text-secondary">25.6751° N, 94.1086° E • Sub-division Kigwema</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-3xl font-extrabold text-error">94.2</span>
+                    <span class="text-[10px] text-secondary font-mono block">Scale / 100</span>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3 p-3 rounded-xl bg-surface-container-low text-xs border border-surface-container">
+                  <div>
+                    <span class="text-secondary block">Population:</span>
+                    <strong class="text-on-surface text-sm">2,450 Residents</strong>
+                    <span class="text-[10px] text-secondary block">6 villages exposed</span>
+                  </div>
+                  <div>
+                    <span class="text-secondary block">Road Corridors:</span>
+                    <strong class="text-on-surface text-sm">3 Vital Links</strong>
+                    <span class="text-[10px] text-error font-semibold block">NH-29 Severance Risk</span>
+                  </div>
+                  <div>
+                    <span class="text-secondary block">Critical Assets:</span>
+                    <strong class="text-on-surface text-sm">1 Health Substation</strong>
+                    <span class="text-[10px] text-secondary block">11kV Grid Branch</span>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-surface-container">
+                  <button onclick="showToast('SDRF 12th Battalion Dispatched to Zone A')" class="px-3.5 py-1.5 bg-error text-on-primary rounded-lg text-xs font-semibold hover:opacity-95 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[16px]">groups</span>
+                    <span>Assign SDRF / NDRF Team</span>
+                  </button>
+                  <button onclick="showToast('NH-29 Preemptive Road Closure Broadcasted')" class="px-3.5 py-1.5 bg-surface-container text-on-surface rounded-lg text-xs font-semibold hover:bg-surface-container-high flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[16px]">traffic</span>
+                    <span>Issue Road Closure Notice</span>
+                  </button>
+                  <button onclick="openModal('alert-modal')" class="px-3.5 py-1.5 bg-primary-container text-on-primary rounded-lg text-xs font-semibold hover:opacity-95 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[16px]">cell_tower</span>
+                    <span>Send Automated Village Alerts</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Priority Card 2 -->
+              <div class="bg-surface-container-lowest p-5 rounded-2xl border border-surface-container-high shadow-sm flex flex-col gap-3">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 rounded bg-orange-100 text-orange-800 text-[10px] font-mono font-bold uppercase">Priority 02 High</span>
+                      <span class="text-xs text-secondary font-mono">Saturated Sub-surface</span>
+                    </div>
+                    <h3 class="text-base font-bold text-on-surface mt-1">Zubza Valley Incline (Zone B)</h3>
+                    <span class="text-xs text-secondary">25.7118° N, 94.0243° E • Sechü Zubza Sector</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-2xl font-bold text-orange-600">78.5</span>
+                    <span class="text-[10px] text-secondary font-mono block">Scale / 100</span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between text-xs text-on-surface-variant pt-2 border-t border-surface-container">
+                  <span>1,200 Residents • 1 Main Bypass Link</span>
+                  <button onclick="showToast('Inspection unit dispatched to Zubza')" class="px-3 py-1 bg-surface-container text-primary rounded font-semibold hover:bg-surface-container-high">Deploy Inspection Unit</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right 4-cols: Resource Availability Inventory -->
+            <div class="lg:col-span-4 flex flex-col gap-4">
+              <div class="bg-surface-container-lowest p-5 rounded-2xl border border-surface-container-high shadow-sm">
+                <div class="flex items-center justify-between mb-4 pb-2 border-b border-surface-container">
+                  <span class="text-xs font-mono uppercase font-bold text-secondary">Live Inventory</span>
+                  <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold">READY</span>
+                </div>
+
+                <div class="space-y-3 text-xs">
+                  <div>
+                    <div class="flex justify-between text-on-surface font-semibold">
+                      <span>SDRF Battalions Available</span>
+                      <span>4 Teams (2 Standby, 2 Deployed)</span>
+                    </div>
+                    <div class="w-full h-2 rounded bg-surface-container mt-1 overflow-hidden">
+                      <div class="h-full bg-emerald-500 rounded" style="width: 50%;"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="flex justify-between text-on-surface font-semibold">
+                      <span>Heavy Excavators (JCB / Poclain)</span>
+                      <span>3 Free / 9 Total</span>
+                    </div>
+                    <div class="w-full h-2 rounded bg-surface-container mt-1 overflow-hidden">
+                      <div class="h-full bg-orange-500 rounded" style="width: 66%;"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="flex justify-between text-on-surface font-semibold">
+                      <span>Designated Relief Camps</span>
+                      <span>4 Halls (Cap: 3,200 souls)</span>
+                    </div>
+                    <div class="w-full h-2 rounded bg-surface-container mt-1 overflow-hidden">
+                      <div class="h-full bg-primary rounded" style="width: 40%;"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-surface-container flex flex-col gap-2">
+                  <button onclick="openModal('alert-modal')" class="w-full py-2 bg-primary text-on-primary rounded-lg text-xs font-bold hover:opacity-95 flex items-center justify-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">campaign</span>
+                    <span>Broadcast Incident Directives</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 5: ALERTS DASHBOARD (WITH MODAL EMBEDDED) -->
+      <!-- ============================================================ -->
+      <section id="view-alerts-warnings" class="screen-view">
+        <div class="flex flex-col gap-6 max-w-7xl mx-auto">
+          
+          <!-- Banner -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest p-6 rounded-2xl border border-surface-container-high shadow-sm">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs font-mono text-primary font-bold uppercase">NDMA CAP-IN PROTOCOL v1.2</span>
+                <span class="px-2 py-0.5 rounded bg-error-container text-on-error-container text-[10px] font-mono font-bold">7 BROADCASTS ACTIVE</span>
+              </div>
+              <h1 class="text-2xl font-bold text-on-surface">Early Warning Alerts &amp; Public Safety Dispatches</h1>
+              <p class="text-sm text-on-surface-variant mt-1">Multi-lingual Cell Broadcasts, Acoustic Siren Sounders, and Village VHF Radios.</p>
+            </div>
+            
+            <button onclick="openModal('alert-modal')" class="px-4 py-2.5 bg-error text-on-primary rounded-lg text-sm font-semibold hover:opacity-95 shadow-sm flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">add_alert</span>
+              <span>Create &amp; Authorize New Alert</span>
+            </button>
+          </div>
+
+          <!-- Active Alerts List -->
+          <div id="alerts-list" class="grid grid-cols-1 gap-4">
+            
+            <!-- Alert 1 -->
+            <div class="bg-surface-container-lowest p-5 rounded-2xl border-l-4 border-error border-y border-r border-surface-container-high shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-error/10 text-error flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-[24px]">emergency</span>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-error text-on-primary uppercase">RED - EVACUATE</span>
+                    <span class="text-xs text-secondary font-mono">Dispatched 18m ago • Cap XML signed</span>
+                  </div>
+                  <h3 class="text-base font-bold text-on-surface mt-1">Mandatory Evacuation: Kohima South Ridge (NH-29 km 14.8)</h3>
+                  <p class="text-xs text-on-surface-variant mt-0.5">2,450 residents in 6 hamlets ordered to Kigwema High School Relief Hall. Siren Tower 01 &amp; 04 sounding.</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button onclick="showToast('Siren Silence signal sent to Tower 01 & 04')" class="px-3 py-1.5 bg-surface-container text-on-surface rounded text-xs font-semibold hover:bg-surface-container-high">Silence Siren</button>
+                <button onclick="showToast('Re-transmitting Cell Broadcast to 2,450 sims')" class="px-3 py-1.5 bg-primary text-on-primary rounded text-xs font-semibold">Resend Broadcast</button>
+              </div>
+            </div>
+
+            <!-- Alert 2 -->
+            <div class="bg-surface-container-lowest p-5 rounded-2xl border-l-4 border-orange-500 border-y border-r border-surface-container-high shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-[24px]">warning</span>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-orange-500 text-white uppercase">ORANGE - WATCH</span>
+                    <span class="text-xs text-secondary font-mono">Dispatched 42m ago</span>
+                  </div>
+                  <h3 class="text-base font-bold text-on-surface mt-1">Traffic Diversion: NH-29 Sechü Zubza Incline</h3>
+                  <p class="text-xs text-on-surface-variant mt-0.5">Heavy commercial vehicles diverted via Wokha corridor. Single-lane slow crawl for light emergency vehicles.</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button onclick="showToast('Traffic diversion updated with Nagaland Traffic Police')" class="px-3 py-1.5 bg-surface-container text-on-surface rounded text-xs font-semibold hover:bg-surface-container-high">Manage Traffic Notice</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 6: FIELD REPORTS DASHBOARD -->
+      <!-- ============================================================ -->
+      <section id="view-field-reports" class="screen-view">
+        <div class="flex flex-col gap-6 max-w-7xl mx-auto">
+          
+          <!-- Banner -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest p-6 rounded-2xl border border-surface-container-high shadow-sm">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs font-mono text-primary font-bold uppercase">FIELD INTELLIGENCE &amp; GROUND TRUTH SYNC</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold">29 CONFIRMED</span>
+              </div>
+              <h1 class="text-2xl font-bold text-on-surface">Field Intelligence &amp; Ground Observations</h1>
+              <p class="text-sm text-on-surface-variant mt-1">Geotagged crack verifications and community scout reports validating AI predictions.</p>
+            </div>
+          </div>
+
+          <!-- Layout: Submit Form + Live Feed -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left 5-cols: Rapid Submission Form -->
+            <div class="lg:col-span-5 bg-surface-container-lowest p-6 rounded-2xl border border-surface-container-high shadow-sm flex flex-col gap-4">
+              <div class="flex items-center justify-between pb-2 border-b border-surface-container">
+                <h3 class="text-sm font-bold text-on-surface">Submit Field Observation (Geo-Tagged)</h3>
+                <span class="text-[10px] font-mono text-secondary">SEC-NL-FRM-04</span>
+              </div>
+
+              <!-- Form Fields -->
+              <div class="space-y-3 text-xs">
+                <div>
+                  <label class="font-bold text-on-surface block mb-1">Location / Road Corridor Chainage *</label>
+                  <input id="field-input-location" type="text" class="w-full p-2 rounded-lg bg-surface-container-low border border-surface-container text-on-surface focus:outline-none focus:border-primary" value="NH-29 Lifeline Bypass, km 14.8 (Kigwema Incline)"/>
+                </div>
+
+                <div class="p-2.5 rounded-lg bg-surface-container-low border border-surface-container text-[11px] text-secondary flex items-center justify-between font-mono">
+                  <span>📍 25.6744° N, 94.1082° E (±2.4m NaVIC)</span>
+                  <span class="text-emerald-700 font-bold">LOCKED</span>
+                </div>
+
+                <div>
+                  <label class="font-bold text-on-surface block mb-1">Observation / Hazard Type *</label>
+                  <select id="field-input-type" class="w-full p-2 rounded-lg bg-surface-container-low border border-surface-container text-on-surface">
+                    <option>Slope Tension Crack (18cm expansion)</option>
+                    <option>Road Subsidence / Blockage</option>
+                    <option>Water Seepage / Mudflow</option>
+                    <option>Retaining Wall Bulge</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="font-bold text-on-surface block mb-1">Hazard Severity</label>
+                  <div class="flex gap-2">
+                    <button type="button" class="px-3 py-1 rounded bg-error text-on-primary font-bold">Critical</button>
+                    <button type="button" class="px-3 py-1 rounded bg-surface-container text-on-surface">High</button>
+                    <button type="button" class="px-3 py-1 rounded bg-surface-container text-on-surface">Moderate</button>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="font-bold text-on-surface block mb-1">Field Notes &amp; Narrative</label>
+                  <textarea id="field-input-notes" rows="3" class="w-full p-2 rounded-lg bg-surface-container-low border border-surface-container text-on-surface focus:outline-none focus:border-primary" placeholder="Enter physical measurements, toe bulge, mudflow...">Fresh longitudinal tension cracks spreading across road embankment after 4 hours of torrential downpour. Water pooling along uphill scarp face.</textarea>
+                </div>
+              </div>
+
+              <!-- Requirement: "On Field Reports, 'Submit Report' should show a successful submission confirmation" -->
+              <button onclick="submitFieldReport()" type="button" class="w-full py-2.5 bg-primary-container text-on-primary font-bold rounded-lg text-sm hover:opacity-95 shadow transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">send</span>
+                <span>Submit Field Report to Command</span>
+              </button>
+
+              <!-- Inline Success Confirmation Box (revealed on click) -->
+              <div id="field-report-success-box" class="hidden p-4 rounded-xl bg-emerald-50 border-2 border-emerald-500 text-xs text-emerald-950 flex flex-col gap-1.5 animate-fadeIn">
+                <div class="flex items-center gap-1.5 font-bold text-emerald-800">
+                  <span class="material-symbols-outlined text-emerald-600 text-[18px]">check_circle</span>
+                  <span>Report #FR-8842 Successfully Synced &amp; Queued!</span>
+                </div>
+                <p>Observation cryptographically signed (SHA-256) and verified against Sentinel-1 InSAR velocity cluster (+4.8 mm/hr). AI Risk Model updated from 79 to <strong>88/100</strong>.</p>
+                <span class="text-[10px] text-emerald-700 font-mono">Distributed to SDRF Kohima &amp; PWD Emergency Cell (Sync latency: 1.1s)</span>
+              </div>
+            </div>
+
+            <!-- Right 7-cols: Verified Feed -->
+<div id="field-reports-list" class="lg:col-span-7 flex flex-col gap-3">
+
+    <span class="text-xs font-mono uppercase font-bold text-secondary">
+        Verified Ground Truth Stream (38 reports / 24h)
+    </span>
+
+    <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm flex flex-col gap-2">
+        ...
+        <!-- existing report -->
+    </div>
+
+              <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm flex flex-col gap-2">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="px-2 py-0.5 rounded bg-orange-500 text-white text-[10px] font-mono font-bold uppercase">High Risk • Verified</span>
+                      <span class="text-xs text-secondary font-mono">#REP-9037 • 34m ago</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-on-surface mt-1">HIGH RISK: Debris Flow &amp; Culvert Clogging</h4>
+                    <span class="text-xs text-secondary">K. Sema (VDMC Scout) • Zubza Valley Incline</span>
+                  </div>
+                </div>
+                <p class="text-xs text-on-surface-variant">Heavy mud runoff overtopping drainage canal. Culvert 80% obstructed with tree branches.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- SCREEN 7: SCENARIO SIMULATOR -->
+      <!-- ============================================================ -->
+      <section id="view-scenario-simulator" class="screen-view">
+        <div class="flex flex-col gap-6 max-w-7xl mx-auto">
+          
+          <!-- Top Warning Banner -->
+          <div class="bg-error-container/40 border-l-4 border-error p-4 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-sm">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-error text-on-primary flex items-center justify-center shrink-0 animate-pulse">
+                <span class="material-symbols-outlined text-[20px]">emergency_home</span>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-mono uppercase font-bold text-error">⚠️ SIMULATION MODE — DEMONSTRATION ONLY</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-mono">Synthetic Stress Test</span>
+                </div>
+                <span class="text-xs text-on-surface-variant">Calibrated for Kohima District (NH-29 Corridor). Move slider to observe dynamic hydrodynamic shifts.</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="setSimPreset(50)" class="px-3 py-1 rounded bg-surface-container text-xs font-medium hover:bg-surface-container-high">Reset Baseline (50mm)</button>
+              <button onclick="showToast('SITREP-SIM-2024.pdf exported')" class="px-3 py-1 rounded bg-primary text-on-primary text-xs font-semibold">Export SITREP</button>
+            </div>
+          </div>
+
+          <!-- Requirement: "On Scenario Simulator, changing rainfall should update the simulated risk values and map visualization." -->
+          <!-- Interactive Rainfall Control Deck -->
+          <div class="bg-surface-container-lowest p-6 rounded-2xl border border-surface-container-high shadow-sm flex flex-col gap-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-lg font-bold text-on-surface">Rainfall Hazard Intensity Stress Engine</span>
+                  <span class="px-2 py-0.5 rounded bg-surface-container text-primary text-[10px] font-mono font-bold uppercase">Hydro-Geotech v3.2</span>
+                </div>
+                <span class="text-xs text-on-surface-variant">Drag the slider or click snap presets to simulate cloudburst conditions.</span>
+              </div>
+
+              <!-- Snap Presets -->
+              <div class="flex items-center gap-2 bg-surface-container-low p-1.5 rounded-xl border border-surface-container">
+                <button id="sim-btn-50" onclick="setSimPreset(50)" class="px-3 py-1 rounded text-xs font-mono font-bold transition-all bg-surface-container text-on-surface">50 mm (Threshold)</button>
+                <button id="sim-btn-100" onclick="setSimPreset(100)" class="px-3 py-1 rounded text-xs font-mono font-bold transition-all bg-primary text-on-primary shadow-sm">100 mm (Accelerated)</button>
+                <button id="sim-btn-150" onclick="setSimPreset(150)" class="px-3 py-1 rounded text-xs font-mono font-bold transition-all bg-surface-container text-on-surface">150 mm (Cloudburst)</button>
+              </div>
+            </div>
+
+            <!-- Slider Control -->
+            <div class="flex flex-col gap-2 pt-2">
+              <div class="flex justify-between items-center text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-[20px]">water_drop</span>
+                  <span class="font-bold text-on-surface">Simulated Cumulative Precipitation (24-Hour Horizon):</span>
+                  <span id="sim-slider-label" class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-mono font-bold text-sm">100 mm/24h</span>
+              </div>
+
+<div class="flex items-center gap-3 mb-3">
+  <label
+    for="sim-zone-select"
+    class="font-bold text-on-surface"
+  >
+    Simulation Zone:
+  </label>
+
+  <select
+    id="sim-zone-select"
+    onchange="onSimZoneChange(this.value)"
+    class="px-3 py-2 rounded-lg bg-surface-container border border-outline text-on-surface font-medium"
+  >
+    <option value="zone-a">Kohima Zone A</option>
+    <option value="zone-b">Zubza Valley Zone B</option>
+    <option value="zone-c">Medziphema Zone C</option>
+  </select>
+</div>
+
+<span class="text-secondary font-mono">
+  Infiltration: 0.74 • 3-Day Saturation Base
+</span>
+</div>
+              <input id="sim-rainfall-slider" type="range" min="40" max="180" value="100" step="1" oninput="onSimSliderMove(this.value)" class="w-full h-3 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary"/>
+              <div class="flex justify-between text-[11px] font-mono text-secondary px-1">
+                <span>40mm (Dry)</span>
+                <span class="text-amber-700 font-bold">50mm (Alert)</span>
+                <span class="text-orange-700 font-bold">100mm (Accelerated)</span>
+                <span class="text-error font-bold">150mm (Cloudburst Failure)</span>
+                <span>180mm (Catastrophic)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Executive Dynamic Metric HUD Gauges -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- Gauge 1: Risk Score -->
+            <div class="bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high shadow-sm flex flex-col justify-between">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-mono font-bold uppercase text-secondary">Composite Risk</span>
+                <span id="sim-badge-risk" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-orange-100 text-orange-800">High Alert</span>
+              </div>
+              <div class="flex items-baseline gap-1 my-3">
+                <span id="sim-val-risk" class="text-4xl font-extrabold text-on-surface">72</span>
+                <span class="text-xs text-secondary font-mono">/ 100</span>
+              </div>
+              <div class="flex justify-between text-xs pt-2 border-t border-surface-container text-on-surface-variant">
+                <span>Soil Saturation:</span>
+                <strong id="sim-val-vwc" class="text-on-surface">81% VWC</strong>
+              </div>
+            </div>
+
+            <!-- Gauge 2: Factor of Safety -->
+            <div class="bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high shadow-sm flex flex-col justify-between">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-mono font-bold uppercase text-secondary">Factor of Safety (FoS)</span>
+                <span id="sim-badge-fos" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-orange-100 text-orange-800">Metastable</span>
+              </div>
+              <div class="flex items-baseline gap-1 my-3">
+                <span id="sim-val-fos" class="text-4xl font-extrabold text-on-surface">1.02</span>
+                <span class="text-xs text-secondary font-mono">threshold 1.00</span>
+              </div>
+              <div class="flex justify-between text-xs pt-2 border-t border-surface-container text-on-surface-variant">
+                <span>Pore Pressure:</span>
+                <strong id="sim-val-pwp" class="text-on-surface">142 kPa</strong>
+              </div>
+            </div>
+
+            <!-- Gauge 3: Habitations Exposed -->
+            <div class="bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high shadow-sm flex flex-col justify-between">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-mono font-bold uppercase text-secondary">Habitations Exposed</span>
+                <span id="sim-badge-hamlets" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-surface-container text-on-surface">4 Hamlets</span>
+              </div>
+              <div class="flex items-baseline gap-1 my-3">
+                <span id="sim-val-souls" class="text-4xl font-extrabold text-on-surface">1,480</span>
+                <span class="text-xs text-secondary font-mono">Souls</span>
+              </div>
+              <div class="flex justify-between text-xs pt-2 border-t border-surface-container text-on-surface-variant">
+                <span>Evacuation:</span>
+                <strong id="sim-val-evac" class="text-orange-700">Stage 1 Voluntary</strong>
+              </div>
+            </div>
+
+            <!-- Gauge 4: NH-29 Severance -->
+            <div class="bg-surface-container-lowest p-5 rounded-xl border border-surface-container-high shadow-sm flex flex-col justify-between">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-mono font-bold uppercase text-secondary">NH-29 Cutoff Risk</span>
+                <span id="sim-badge-highway" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-orange-100 text-orange-800">Diversion Alert</span>
+              </div>
+              <div class="flex items-baseline gap-1 my-3">
+                <span id="sim-val-cutoff" class="text-4xl font-extrabold text-on-surface">64%</span>
+                <span class="text-xs text-secondary font-mono">Probability</span>
+              </div>
+              <div class="flex justify-between text-xs pt-2 border-t border-surface-container text-on-surface-variant">
+                <span>Priority:</span>
+                <strong id="sim-val-priority" class="text-primary font-bold">Priority 2 (Stage SDRF)</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic GIS Map Visualization for Simulator -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div class="lg:col-span-8 bg-surface-container-lowest rounded-2xl border border-surface-container-high shadow-sm overflow-hidden flex flex-col">
+              <div class="px-4 py-3 bg-surface-container-low border-b border-surface-container flex items-center justify-between">
+                <span class="text-xs font-mono font-bold uppercase text-on-surface">Dynamic Debris Runout &amp; Rupture Kinematics</span>
+                <span id="sim-map-area" class="text-xs font-mono font-bold text-primary">0.42 km² Runout Extent</span>
+              </div>
+
+              <!-- SVG Dynamic Map -->
+              <div class="relative w-full h-[400px] bg-slate-100 overflow-hidden select-none">
+                <svg class="w-full h-full" viewBox="0 0 800 400" preserveAspectRatio="none">
+                  <defs>
+                    <radialGradient id="sim-cone-grad" cx="50%" cy="50%" r="50%">
+                      <stop id="sim-cone-stop0" offset="0%" stop-color="#ea580c" stop-opacity="0.85"/>
+                      <stop id="sim-cone-stop1" offset="50%" stop-color="#ea580c" stop-opacity="0.5"/>
+                      <stop id="sim-cone-stop2" offset="100%" stop-color="#ea580c" stop-opacity="0"/>
+                    </radialGradient>
+                  </defs>
+                  <!-- Grid -->
+                  <pattern id="sim-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(148, 163, 184, 0.15)" stroke-width="1"/>
+                  </pattern>
+                  <rect width="100%" height="100%" fill="url(#sim-grid)"/>
+                  
+                  <!-- Contours -->
+                  <path d="M 40 180 Q 180 120 320 220 T 640 160 T 800 240" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+                  <path d="M 20 260 Q 220 190 380 300 T 720 220 T 800 320" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+                  
+                  <!-- Highway NH-29 -->
+                  <path d="M 60 380 C 220 340 340 290 480 230 S 660 140 800 110" fill="none" stroke="#2563eb" stroke-width="6" stroke-linecap="round"/>
+                  <path d="M 60 380 C 220 340 340 290 480 230 S 660 140 800 110" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="6 6"/>
+
+                  <!-- Dynamic Debris Cone Ellipse that expands with slider -->
+                  <ellipse id="sim-runout-ellipse" cx="480" cy="230" rx="90" ry="60" fill="url(#sim-cone-grad)"/>
+                  <circle id="sim-choke-ping" cx="480" cy="230" r="14" fill="#ea580c" class="animate-ping" fill-opacity="0.4"/>
+                  <circle id="sim-choke-dot" cx="480" cy="230" r="7" fill="#ea580c" stroke="#ffffff" stroke-width="2"/>
+                </svg>
+
+                <div class="absolute left-[410px] top-[170px] bg-surface-container-lowest px-3 py-1.5 rounded-lg shadow-lg border-2 border-orange-500 flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-orange-600 text-[16px]">dangerous</span>
+                  <span class="text-xs font-bold text-on-surface">NH-29 km 14.8:</span>
+                  <span id="sim-choke-status" class="text-xs font-bold text-orange-700">Single-Lane Diversion</span>
+                </div>
+              </div>
+
+              <div class="px-4 py-3 bg-surface-container-low border-t border-surface-container flex items-center justify-between text-xs">
+                <span id="sim-narrative-text" class="text-on-surface font-medium">100 mm scenario triggers subsurface shear softening along Kohima South flank. NH-29 single-lane bypass required.</span>
+              </div>
+            </div>
+
+            <!-- Right 4-cols: SOP & Action plan -->
+            <div class="lg:col-span-4 flex flex-col gap-4">
+              <div class="bg-surface-container-lowest p-5 rounded-2xl border border-surface-container-high shadow-sm flex flex-col gap-3">
+                <div class="flex justify-between items-center pb-2 border-b border-surface-container">
+                  <span class="text-xs font-mono uppercase font-bold text-secondary">Standard Operating Procedure</span>
+                  <span id="sim-badge-sop" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-orange-100 text-orange-800">Priority 2</span>
+                </div>
+                <ul id="sim-sop-list" class="space-y-2 text-xs text-on-surface-variant">
+                  <li class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-primary text-[16px] shrink-0">check_circle</span>
+                    <span>Pre-position SDRF Quick Response Teams at NH-29 chainage km 12 staging depot.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-primary text-[16px] shrink-0">check_circle</span>
+                    <span>Broadcast CAP-IN advisory to village council headmen of Jotsoma and Zubza.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="material-symbols-outlined text-primary text-[16px] shrink-0">check_circle</span>
+                    <span>Issue single-lane traffic crawl restriction via Nagaland Traffic Police command.</span>
+                  </li>
+                </ul>
+
+                <button onclick="showToast('Scenario parameters promoted to Live EOC Desk!')" class="w-full mt-2 py-2 bg-primary-container text-on-primary rounded-lg text-xs font-bold hover:opacity-95 shadow">
+                  Promote Scenario to Live Action Plan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- PERSISTENT FOOTER -->
+    <footer class="w-full bg-surface-container-low py-3 px-6 border-t border-surface-container flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-on-surface-variant">
+      <span>State Disaster Management Authority • Smart India Hackathon 2026</span>
+      <span class="font-mono text-secondary">GeoSentinel v2.4 (Northeast Regional Command)</span>
+    </footer>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODAL: CREATE & AUTHORIZE EARLY WARNING ALERT -->
+  <!-- ============================================================ -->
+  <div id="alert-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-surface-container-lowest rounded-2xl max-w-2xl w-full border border-surface-container-high shadow-2xl overflow-hidden animate-fadeIn">
+      
+      <!-- Modal Header -->
+      <div class="p-5 bg-error-container/30 border-b border-error/20 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-error text-on-primary flex items-center justify-center">
+            <span class="material-symbols-outlined text-[18px]">campaign</span>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-on-surface">Create &amp; Authorize Early Warning Alert</h3>
+            <span class="text-xs text-secondary font-mono">NDMA CAP-IN v1.2 Protocol • §34 Disaster Management Act Enforceable</span>
+          </div>
+        </div>
+        <button onclick="closeModal('alert-modal')" class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-secondary">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4 text-xs max-h-[75vh] overflow-y-auto">
+        <div>
+          <label class="font-bold text-on-surface block mb-1">1. Target Jurisdiction &amp; Hazard Sector</label>
+          <select class="w-full p-2.5 rounded-lg bg-surface-container-low border border-surface-container text-on-surface">
+            <option>Kohima District - Zone A (South Ridge / NH-29 Lifeline Corridor)</option>
+            <option>Zubza Valley Incline (Zone B)</option>
+            <option>Medziphema Slope Cut (Zone C)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="font-bold text-on-surface block mb-1">2. Alert Severity &amp; Mandatory Escalation</label>
+          <div class="grid grid-cols-3 gap-2">
+
+    <button
+        type="button"
+        id="severity-yellow"
+        onclick="selectAlertSeverity('YELLOW')"
+        class="p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center">
+        Yellow - Advisory
+    </button>
+
+    <button
+        type="button"
+        id="severity-orange"
+        onclick="selectAlertSeverity('ORANGE')"
+        class="p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center">
+        Orange - Watch
+    </button>
+
+    <button
+        type="button"
+        id="severity-red"
+        onclick="selectAlertSeverity('RED')"
+        class="p-2 rounded-lg bg-error text-on-primary font-bold text-center">
+        Red - Warning / Evac
+    </button>
+
+</div>
+        </div>
+
+        <div>
+          <label class="font-bold text-on-surface block mb-1">3. Multi-Language Broadcast Payload (CAP XML &amp; Cell Broadcast)</label>
+          <textarea rows="3" class="w-full p-2.5 rounded-lg bg-surface-container-low border border-surface-container text-on-surface font-mono text-[11px] focus:outline-none focus:border-primary">EMERGENCY LANDSLIDE WARNING (GeoSentinel/SDMA): Severe slope failure imminent along NH-29 Kigwema-Phesama sector within next 2-4 hours due to sustained rainfall (128mm). Residents in low-lying and slope-base clusters must move immediately to designated Community Relief Hall #2.</textarea>
+          <div class="flex justify-between text-[10px] text-secondary mt-1 font-mono">
+            <span>Auto-translated to Nagamese &amp; Tenyidie</span>
+            <span>242 / 360 chars</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-on-surface block mb-1">4. Transmission Channels &amp; Relay Protocols</label>
+          <div class="grid grid-cols-2 gap-2 text-[11px]">
+            <label class="flex items-center gap-2 p-2 rounded bg-surface-container-low border border-surface-container">
+              <input type="checkbox" checked class="accent-primary"/>
+              <span>SMS Cell Broadcast (2,450 active sims)</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded bg-surface-container-low border border-surface-container">
+              <input type="checkbox" checked class="accent-primary"/>
+              <span>VHF Radio Relay (27 Village Councils)</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded bg-surface-container-low border border-surface-container">
+              <input type="checkbox" checked class="accent-primary"/>
+              <span>NDMA Sachet &amp; State EOC Portal API</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded bg-surface-container-low border border-surface-container">
+              <input type="checkbox" checked class="accent-primary"/>
+              <span>Acoustic Siren Towers (Sector 01 &amp; 04)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 bg-surface-container-low border-t border-surface-container flex items-center justify-between">
+        <button onclick="closeModal('alert-modal')" class="px-4 py-2 text-xs font-semibold text-secondary hover:text-on-surface">Cancel</button>
+        <button onclick="authorizeAndSendAlert()" class="px-5 py-2 bg-error text-on-primary font-bold rounded-lg text-xs hover:opacity-95 shadow flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">send</span>
+          <span>Authorize &amp; Transmit Emergency Alert</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING TOAST NOTIFICATION -->
+  <div id="app-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700">
+    <span class="material-symbols-outlined text-primary-fixed text-[20px]" id="toast-icon">info</span>
+    <span class="text-xs font-medium" id="toast-msg">Notification text</span>
+  </div> 
+   <!-- JAVASCRIPT: UNIFIED INTERACTIVE ROUTER & LOGIC -->
+
+<script>
+
+
+    // ============================================================
+    // GEOSENTINEL LOCATION DATABASE
+    // ============================================================
+
+    const LOCATION_DATABASE = [
+        {
+            id: "kohima",
+            name: "Kohima District",
+            state: "Nagaland",
+            zones: ["zone-a"]
+        },
+        {
+            id: "dimapur",
+            name: "Dimapur District",
+            state: "Nagaland",
+            zones: []
+        },
+        {
+            id: "peren",
+            name: "Peren District",
+            state: "Nagaland",
+            zones: []
+        },
+        {
+            id: "wokha",
+            name: "Wokha District",
+            state: "Nagaland",
+            zones: []
+        },
+        {
+            id: "mokokchung",
+            name: "Mokokchung District",
+            state: "Nagaland",
+            zones: []
+        },
+        {
+            id: "mon",
+            name: "Mon District",
+            state: "Nagaland",
+            zones: []
+        },
+        {
+            id: "tuensang",
+            name: "Tuensang District",
+            state: "Nagaland",
+            zones: []
+        },
+        {
+            id: "zunheboto",
+            name: "Zunheboto District",
+            state: "Nagaland",
+            zones: []
+        },
+        {
+            id: "phek",
+            name: "Phek District",
+            state: "Nagaland",
+            zones: []
+        }
+    ];
+
+    let selectedLocationId = "kohima";
+
+
+    // ============================================================
+    // NAVIGATION ROUTER
+    // ============================================================
+
+    function navigateTo(viewId) {
+        // your existing code here...
+    }
+
+
+    
+let selectedAlertSeverity = "RED";
+
+function selectAlertSeverity(severity) {
+    selectedAlertSeverity = severity;
+
+    const yellow = document.getElementById("severity-yellow");
+    const orange = document.getElementById("severity-orange");
+    const red = document.getElementById("severity-red");
+
+    // Reset all buttons
+    yellow.className =
+        "p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center";
+
+    orange.className =
+        "p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center";
+
+    red.className =
+        "p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center";
+
+    // Highlight selected button
+    if (severity === "YELLOW") {
+        yellow.className =
+            "p-2 rounded-lg bg-yellow-400 text-black font-bold text-center";
+    }
+
+    if (severity === "ORANGE") {
+        orange.className =
+            "p-2 rounded-lg bg-orange-500 text-white font-bold text-center";
+    }
+
+    if (severity === "RED") {
+        red.className =
+            "p-2 rounded-lg bg-error text-on-primary font-bold text-center";
+    }
+
+    console.log("Selected alert severity:", severity);
+    showToast(`Alert severity changed to ${severity}`);
+}
+
+function navigateTo(viewId) {
+    console.log("NAVIGATION CLICKED:", viewId);
+
+    // Hide all screens
+    document.querySelectorAll(".screen-view").forEach(function(screen) {
+        screen.classList.remove("active");
+    });
+
+    // Find selected screen
+    const targetView = document.getElementById("view-" + viewId);
+
+    if (!targetView) {
+        console.error("SCREEN NOT FOUND:", "view-" + viewId);
+        return;
+    }
+
+    // Show selected screen
+    targetView.classList.add("active");
+
+    // Update sidebar active button
+    document.querySelectorAll("#sidebar-nav .nav-item").forEach(function(button) {
+        const buttonView = button.getAttribute("data-nav");
+
+        if (buttonView === viewId) {
+            button.className =
+                "nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-semibold text-left w-full bg-primary-container text-on-primary shadow-sm";
+        } else {
+            button.className =
+                "nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-medium text-left w-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface";
+        }
+    });
+
+    // Scroll to top
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+    console.log("NAVIGATION SUCCESS:", viewId);
+    function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+
+    if (modal) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    } else {
+        console.error("MODAL NOT FOUND:", modalId);
+    }
+}
+
+    function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+
+    if (modal) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    } else {
+        console.error("MODAL NOT FOUND:", modalId);
+    }
+}
+
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+
+    if (modal) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    } else {
+        console.error("MODAL NOT FOUND:", modalId);
+    }
+}
+}
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+
+    if (modal) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    } else {
+        console.error("MODAL NOT FOUND:", modalId);
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+
+    if (modal) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+    } else {
+        console.error("MODAL NOT FOUND:", modalId);
+    }
+}
+
+function showToast(message) {
+    const toast = document.getElementById('app-toast');
+    const messageEl = document.getElementById('toast-msg');
+
+    if (!toast || !messageEl) {
+        console.log(message);
+        return;
+    }
+
+    messageEl.innerText = message;
+
+    toast.classList.remove('translate-y-24', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-24', 'opacity-0');
+    }, 3000);
+}
+
+async function authorizeAndSendAlert() {
+    try {
+        const res = await fetch('http://127.0.0.1:8000/api/alerts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                zone_id: 'zone-a',
+                severity: selectedAlertSeverity,
+                title: 'Mandatory Evacuation: Kohima South Ridge (NH-29 km 14.8)',
+                message: 'EMERGENCY LANDSLIDE WARNING (GeoSentinel/SDMA): Severe slope failure imminent.',
+                channels: [
+                    'sms',
+                    'vhf',
+                    'ndma_sachet',
+                    'siren'
+                ]
+            })
+        });
+
+        if (!res.ok) {
+            throw new Error(`Server returned ${res.status}`);
+        }
+
+        const alert = await res.json();
+
+        // Close alert modal
+        closeModal('alert-modal');
+
+        // Show success message
+        showToast(
+            `🚨 Alert ${alert.alert?.id || alert.id || 'created'} authorized & transmitted.`
+        );
+
+        // Refresh dashboard numbers
+        loadDashboardMetrics();
+        loadAlerts();
+
+    } catch (error) {
+        console.error('Alert transmission failed:', error);
+
+        showToast(
+            '⚠️ Alert failed to send: ' + error.message
+        );
+    }
+}
+
+async function loadDashboardMetrics() {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/dashboard');
+
+    if (!response.ok) {
+      throw new Error(`Server returned ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    document.getElementById('critical-zones-count').innerText =
+      data.critical_zones;
+
+    document.getElementById('high-risk-zones-count').innerText =
+      data.high_risk_zones;
+
+    document.getElementById('villages-at-risk-count').innerText =
+      data.villages_at_risk;
+
+    document.getElementById('road-segments-count').innerText =
+      data.road_segments_at_risk;
+
+    document.getElementById('active-alerts-count').innerText =
+      data.active_alerts;
+
+    document.getElementById('total-exposed-population').innerText =
+      data.total_exposed_population.toLocaleString();
+
+  } catch (error) {
+    console.error('Dashboard metrics failed:', error);
+  }
+}
+
+loadDashboardMetrics();
+
+async function loadAlerts() {
+    try {
+        const response = await fetch(
+            'http://127.0.0.1:8000/api/alerts'
+        );
+
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        console.log('Alerts loaded from backend:', data.alerts);
+
+        const container = document.getElementById('alerts-list');
+
+        if (!container) {
+            console.error('Alerts container not found');
+            return;
+        }
+
+        if (!data.alerts || data.alerts.length === 0) {
+            container.innerHTML = `
+                <div class="p-6 text-center text-on-surface-variant">
+                    No active alerts.
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = data.alerts.map(alert => `
+            <div class="bg-surface-container-lowest rounded-2xl border border-surface-container-high p-5 mb-4 shadow-sm">
+
+                <div class="flex items-start justify-between gap-4">
+
+                    <div class="flex items-start gap-4">
+
+                        <div class="w-11 h-11 rounded-xl bg-error-container text-error flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined">
+                                emergency
+                            </span>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-error text-on-primary uppercase">
+                                    ${alert.severity}
+                                </span>
+
+                                <span class="text-xs text-secondary font-mono">
+                                    Alert #${alert.id}
+                                </span>
+                            </div>
+
+                            <h3 class="text-base font-bold text-on-surface">
+                                ${alert.title}
+                            </h3>
+
+                            <p class="text-xs text-on-surface-variant mt-1">
+                                ${alert.message}
+                            </p>
+
+                            <p class="text-xs text-secondary mt-2">
+                                Zone: ${alert.zone_id}
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        `).join('');
+
+    } catch (error) {
+        console.error('Failed to load alerts:', error);
+        showToast('⚠️ Failed to load alerts');
+    }
+}
+
+async function submitFieldReport() {
+    const location = document.getElementById('field-input-location').value;
+    const type = document.getElementById('field-input-type').value;
+    const notes = document.getElementById('field-input-notes').value;
+
+    try {
+        const response = await fetch(
+            'http://127.0.0.1:8000/api/field-reports',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    zone_id: 'zone-a',
+                    severity: 'Critical',
+                    type: type,
+                    location: location,
+                    notes: notes,
+                    reporter: 'Dr. S. Jamir (DDMA Kohima)'
+                })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        console.log('Field report submitted:', result);
+
+        const successBox = document.getElementById(
+            'field-report-success-box'
+        );
+
+        if (successBox) {
+            successBox.classList.remove('hidden');
+        }
+
+        alert('Field report submitted successfully!');
+
+    } catch (error) {
+        console.error('Field report submission failed:', error);
+        alert('Field report submission failed: ' + error.message);
+    }
+}
+
+async function loadFieldReports() {
+    try {
+        const response = await fetch(
+            'http://127.0.0.1:8000/api/field-reports'
+        );
+
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        console.log('Field reports loaded from backend:', data.reports);
+
+        const container = document.getElementById('field-reports-list');
+
+        if (!container) {
+            console.error('Field reports container not found');
+            return;
+        }
+
+        // Keep the section heading
+        const heading = `
+            <span class="text-xs font-mono uppercase font-bold text-secondary">
+                Verified Ground Truth Stream (${data.count} reports)
+            </span>
+        `;
+
+        if (!data.reports || data.reports.length === 0) {
+            container.innerHTML = `
+                ${heading}
+                <div class="bg-surface-container-lowest p-6 rounded-xl border border-surface-container-high text-center text-on-surface-variant">
+                    No field reports submitted yet.
+                </div>
+            `;
+            return;
+        }
+
+        const reportsHTML = data.reports.map(report => `
+            <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm flex flex-col gap-2">
+
+                <div class="flex justify-between items-start gap-3">
+
+                    <div>
+                        <span class="px-2 py-0.5 rounded bg-error text-on-primary text-[10px] font-mono font-bold uppercase">
+                            ${report.severity} • VERIFIED
+                        </span>
+
+                        <span class="text-xs text-secondary font-mono ml-2">
+                            #REP-${String(report.id).padStart(4, '0')}
+                        </span>
+                    </div>
+
+                </div>
+
+                <h4 class="text-sm font-bold text-on-surface">
+                    ${report.type}
+                </h4>
+
+                <span class="text-xs text-secondary">
+                    ${report.reporter} • ${report.location}
+                </span>
+
+                <p class="text-sm text-on-surface-variant mt-1">
+                    ${report.notes}
+                </p>
+
+                <div class="text-xs text-secondary border-t border-surface-container-high pt-2">
+                    Zone: ${report.zone_id}
+                </div>
+
+            </div>
+        `).join('');
+
+        container.innerHTML = heading + reportsHTML;
+
+    } catch (error) {
+        console.error('Field reports loading failed:', error);
+    }
+}
+loadFieldReports();
+
+</script>
+
+  <script>
+    // Navigation Router across all 7 screens
+    // Load risk zones from backend
+// Load risk zones from backend and display them on the map
+// ============================================================
+// NAVIGATION ROUTER
+// ============================================================
+
+let currentRiskZoneId = 'zone-a';
+
+// ============================================================
+// GEO SENTINEL - MAIN NAVIGATION
+// ============================================================
+
+function navigateTo(viewId) {
+
+  console.log("NAVIGATION CLICKED:", viewId);
+
+  // Get every screen
+  const screens = document.querySelectorAll(".screen-view");
+
+  // Hide every screen
+  screens.forEach(screen => {
+    screen.classList.remove("active");
+  });
+
+  // Find requested screen
+  const target = document.getElementById("view-" + viewId);
+
+  if (!target) {
+    console.error("SCREEN NOT FOUND:", "view-" + viewId);
+    return;
+  }
+
+  // Show requested screen
+  target.classList.add("active");
+
+  // Update sidebar buttons
+  const navButtons = document.querySelectorAll(
+    "#sidebar-nav .nav-item"
+  );
+
+  navButtons.forEach(button => {
+
+    const buttonView = button.getAttribute("data-nav");
+
+    if (buttonView === viewId) {
+
+      button.className =
+        "nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-semibold text-left w-full bg-primary-container text-on-primary shadow-sm";
+
+    } else {
+
+      button.className =
+        "nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-medium text-left w-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface";
+
+    }
+
+  });
+
+  // Scroll to top
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+  console.log("NAVIGATION SUCCESS:", viewId);
+}
+
+
+// ============================================================
+// SIDEBAR CLICK FALLBACK
+// ============================================================
+
+document.addEventListener("click", function(event) {
+
+  const button = event.target.closest(
+    "#sidebar-nav .nav-item"
+  );
+
+  if (!button) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const viewId = button.getAttribute("data-nav");
+
+  if (!viewId) {
+    console.error("Sidebar button has no data-nav:", button);
+    return;
+  }
+
+  console.log("SIDEBAR BUTTON CLICK:", viewId);
+
+  navigateTo(viewId);
+
+});
+
+
+// ============================================================
+// BACKEND: LOAD RISK ZONES
+// ============================================================
+
+async function loadRiskZones() {
+
+  try {
+
+    const res = await fetch(
+      'http://127.0.0.1:8000/api/zones'
+    );
+
+    if (!res.ok) {
+      throw new Error(`Server returned ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    console.log(
+      'Risk zones loaded from backend:',
+      data.zones
+    );
+
+    const container =
+      document.getElementById('dynamic-risk-markers');
+
+    if (!container) {
+
+      console.error(
+        'Risk marker container not found'
+      );
+
+      return;
+    }
+
+    // Clear old markers
+    container.innerHTML = '';
+
+    // Positions of zones on the SVG map
+    const markerPositions = {
+
+      'zone-a': {
+        left: '60%',
+        top: '42%'
+      },
+
+      'zone-b': {
+        left: '42%',
+        top: '55%'
+      },
+
+      'zone-c': {
+        left: '70%',
+        top: '68%'
+      }
+
+    };
+
+
+    // Create marker for every backend zone
+    data.zones.forEach(zone => {
+
+      const position =
+        markerPositions[zone.id];
+
+      if (!position) {
+        return;
+      }
+
+
+      // Decide marker colour based on risk
+      let markerClass = 'bg-success';
+      let borderClass = 'border-success';
+
+      if (zone.risk_score >= 80) {
+
+        markerClass = 'bg-error';
+        borderClass = 'border-error';
+
+      } else if (zone.risk_score >= 60) {
+
+        markerClass = 'bg-warning';
+        borderClass = 'border-warning';
+
+      }
+
+
+      // Create marker element
+      const marker =
+        document.createElement('div');
+
+
+      marker.className =
+        'absolute bg-surface-container-lowest/95 backdrop-blur p-2 rounded shadow-lg border flex items-center gap-1.5 pointer-events-auto cursor-pointer';
+
+
+      marker.classList.add(borderClass);
+
+
+      marker.style.left =
+        position.left;
+
+      marker.style.top =
+        position.top;
+
+      marker.style.transform =
+        'translate(-50%, -50%)';
+
+
+      marker.innerHTML = `
+        <span
+          class="w-2.5 h-2.5 rounded-full ${markerClass} animate-pulse">
+        </span>
+
+        <span class="text-xs font-bold text-on-surface">
+          ${zone.name}
+        </span>
+      `;
+
+
+      // When marker is clicked,
+      // open Risk Analysis for that zone.
+      marker.addEventListener('click', () => {
+
+        currentRiskZoneId = zone.id;
+
+        navigateTo('risk-analysis');
+
+      });
+
+
+      container.appendChild(marker);
+
+    });
+
+
+  } catch (err) {
+
+    console.error(
+      'Failed to load risk zones:',
+      err
+    );
+
+    showToast(
+      '⚠️ Failed to load risk zones'
+    );
+
+  }
+
+}
+
+
+
+// ============================================================
+// BACKEND: LOAD RISK ANALYSIS
+// ============================================================
+
+async function loadRiskAnalysis(zoneId) {
+
+  try {
+
+    // Remember currently selected zone
+    currentRiskZoneId = zoneId;
+
+
+    // --------------------------------------------------------
+    // Get calculated risk from backend
+    // --------------------------------------------------------
+
+    const res = await fetch(
+      `http://127.0.0.1:8000/api/zones/${zoneId}/risk`
+    );
+
+
+    if (!res.ok) {
+
+      throw new Error(
+        `Server returned ${res.status}`
+      );
+
+    }
+
+
+    const data = await res.json();
+
+
+    console.log(
+      'Risk analysis loaded:',
+      data
+    );
+
+
+    // Backend returns:
+    //
+    // {
+    //   zone_id,
+    //   zone_name,
+    //   location,
+    //   risk: {
+    //      risk_score,
+    //      risk_tier,
+    //      components
+    //   }
+    // }
+
+
+    const risk =
+      data.risk || {};
+
+
+    // --------------------------------------------------------
+    // Get complete zone information
+    // --------------------------------------------------------
+
+    const zoneResponse =
+      await fetch(
+        `http://127.0.0.1:8000/api/zones/${zoneId}`
+      );
+
+
+    let zoneInfo = null;
+
+
+    if (zoneResponse.ok) {
+
+      zoneInfo =
+        await zoneResponse.json();
+
+    }
+
+
+    // --------------------------------------------------------
+    // UPDATE ZONE NAME
+    // --------------------------------------------------------
+
+    const zoneNameEl =
+      document.getElementById(
+        'risk-zone-name'
+      );
+
+
+    if (zoneNameEl) {
+
+      zoneNameEl.innerText =
+        (data.zone_name || 'Unknown Zone')
+          .toUpperCase();
+
+    }
+
+
+    // --------------------------------------------------------
+    // UPDATE RISK ANALYSIS TITLE
+    // --------------------------------------------------------
+
+    const titleEl =
+      document.getElementById(
+        'risk-analysis-title'
+      );
+
+
+    if (titleEl) {
+
+      titleEl.innerText =
+        `AI Risk Analysis & Contributing Factors: ${
+          data.zone_name || 'Unknown Zone'
+        }`;
+
+    }
+
+
+    // --------------------------------------------------------
+    // UPDATE RISK SCORE
+    // --------------------------------------------------------
+
+    const riskScoreEl =
+      document.getElementById(
+        'risk-score'
+      );
+
+
+    if (riskScoreEl) {
+
+      riskScoreEl.innerText =
+        Math.round(
+          risk.risk_score ?? 0
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // UPDATE RISK TIER
+    // --------------------------------------------------------
+
+    const riskTierEl =
+      document.getElementById(
+        'risk-tier'
+      );
+
+
+    if (riskTierEl) {
+
+      riskTierEl.innerText =
+        risk.risk_tier || 'UNKNOWN';
+
+    }
+
+
+    // --------------------------------------------------------
+    // UPDATE AI CONFIDENCE
+    // --------------------------------------------------------
+
+    const confidenceEl =
+      document.getElementById(
+        'risk-confidence'
+      );
+
+
+    if (
+      confidenceEl &&
+      zoneInfo
+    ) {
+
+      confidenceEl.innerText =
+        `${zoneInfo.ai_confidence}% AI Conf.`;
+
+    }
+
+
+    // --------------------------------------------------------
+    // UPDATE RAINFALL
+    // --------------------------------------------------------
+
+    const rainfallEl =
+      document.getElementById(
+        'risk-rainfall'
+      );
+
+
+    if (
+      rainfallEl &&
+      zoneInfo
+    ) {
+
+      rainfallEl.innerText =
+        `${zoneInfo.rainfall_24h} mm`;
+
+    }
+
+
+    // --------------------------------------------------------
+    // UPDATE SLOPE
+    // --------------------------------------------------------
+
+    const slopeEl =
+      document.getElementById(
+        'risk-slope'
+      );
+
+
+    if (
+      slopeEl &&
+      zoneInfo
+    ) {
+
+      slopeEl.innerText =
+        `${zoneInfo.slope_degree}°`;
+
+    }
+
+
+    // --------------------------------------------------------
+    // UPDATE INSAR CREEP
+    // --------------------------------------------------------
+
+    const insarEl =
+      document.getElementById(
+        'risk-insar'
+      );
+
+
+    if (
+      insarEl &&
+      zoneInfo
+    ) {
+
+      insarEl.innerText =
+        `${zoneInfo.insar_creep} mm/h`;
+
+    }
+
+
+    // --------------------------------------------------------
+    // UPDATE EXPOSED POPULATION
+    // --------------------------------------------------------
+
+    const populationEl =
+      document.getElementById(
+        'risk-population'
+      );
+
+
+    if (
+      populationEl &&
+      zoneInfo
+    ) {
+
+      populationEl.innerText =
+        `${zoneInfo.exposed_population.toLocaleString()} residents`;
+
+    }
+
+
+    console.log(
+      `Opening Risk Analysis for: ${zoneId}`
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      'Failed to load Risk Analysis:',
+      error
+    );
+
+    showToast(
+      '⚠️ Failed to load Risk Analysis'
+    );
+
+  }
+
+}
+
+
+
+// ============================================================
+// OPEN RISK ANALYSIS FROM ZONE / MAP
+// ============================================================
+
+function navigateToRiskAnalysis(zoneName) {
+
+  const zoneMap = {
+
+    "Kohima South Sector (NH-29 Bypass)":
+      "zone-a",
+
+    "Dzükou Approach Slope":
+      "zone-b",
+
+    "Zubza Riverbank Cut":
+      "zone-b",
+
+    "Kohima Zone A":
+      "zone-a",
+
+    "Zubza Valley Zone B":
+      "zone-b",
+
+    "Medziphema Zone C":
+      "zone-c"
+
+  };
+
+
+  // If zoneName is already a zone ID,
+  // use it directly.
+  const zoneId =
+    zoneMap[zoneName] ||
+    (
+      ['zone-a', 'zone-b', 'zone-c']
+        .includes(zoneName)
+        ? zoneName
+        : 'zone-a'
+    );
+
+
+  currentRiskZoneId =
+    zoneId;
+
+
+  // Open Risk Analysis page
+  navigateTo(
+    'risk-analysis'
+  );
+
+}
+
+
+
+// ============================================================
+// END OF BACKEND RISK ANALYSIS BLOCK
+// ============================================================

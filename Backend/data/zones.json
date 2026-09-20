@@ -1,0 +1,44 @@
+[
+  {
+    "id": "zone-a",
+    "name": "Kohima Zone A",
+    "location": "South Ridge / NH-29 Bypass",
+    "latitude": 25.6751,
+    "longitude": 94.1086,
+    "risk_score": 82,
+    "risk_level": "HIGH",
+    "ai_confidence": 87,
+    "rainfall_24h": 128,
+    "slope_degree": 34.2,
+    "insar_creep": 4.8,
+    "exposed_population": 2450
+  },
+  {
+    "id": "zone-b",
+    "name": "Zubza Valley Zone B",
+    "location": "Zubza Valley Incline",
+    "latitude": 25.6902,
+    "longitude": 94.0715,
+    "risk_score": 79,
+    "risk_level": "HIGH",
+    "ai_confidence": 84,
+    "rainfall_24h": 112,
+    "slope_degree": 31.8,
+    "insar_creep": 3.7,
+    "exposed_population": 1850
+  },
+  {
+    "id": "zone-c",
+    "name": "Medziphema Zone C",
+    "location": "Medziphema Slope Cut",
+    "latitude": 25.7556,
+    "longitude": 93.7217,
+    "risk_score": 68,
+    "risk_level": "MODERATE",
+    "ai_confidence": 79,
+    "rainfall_24h": 96,
+    "slope_degree": 29.4,
+    "insar_creep": 2.6,
+    "exposed_population": 1240
+  }
+]

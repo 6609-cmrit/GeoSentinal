@@ -1,0 +1,184 @@
+{
+  "states": [
+    {
+      "id": "arunachal-pradesh",
+      "name": "Arunachal Pradesh",
+      "districts": [
+        "Anjaw",
+        "Bichom",
+        "Changlang",
+        "Dibang Valley",
+        "East Kameng",
+        "East Siang",
+        "Kamle",
+        "Keyi Panyor",
+        "Kra Daadi",
+        "Kurung Kumey",
+        "Leparada",
+        "Lohit",
+        "Longding",
+        "Lower Dibang Valley",
+        "Lower Siang",
+        "Lower Subansiri",
+        "Namsai",
+        "Pakke Kessang",
+        "Papum Pare",
+        "Shi Yomi",
+        "Siang",
+        "Tawang",
+        "Tirap",
+        "Upper Siang",
+        "Upper Subansiri",
+        "West Kameng",
+        "West Siang"
+      ]
+    },
+    {
+      "id": "assam",
+      "name": "Assam",
+      "districts": [
+        "Bajali",
+        "Baksa",
+        "Barpeta",
+        "Biswanath",
+        "Bongaigaon",
+        "Cachar",
+        "Charaideo",
+        "Chirang",
+        "Darrang",
+        "Dhemaji",
+        "Dhubri",
+        "Dibrugarh",
+        "Dima Hasao",
+        "Goalpara",
+        "Golaghat",
+        "Hailakandi",
+        "Hojai",
+        "Jorhat",
+        "Kamrup",
+        "Kamrup Metro",
+        "Karbi Anglong",
+        "Kokrajhar",
+        "Lakhimpur",
+        "Majuli",
+        "Marigaon",
+        "Nagaon",
+        "Nalbari",
+        "Sivasagar",
+        "Sonitpur",
+        "South Salmara-Mankachar",
+        "Sribhumi",
+        "Tamulpur",
+        "Tinsukia",
+        "Udalguri",
+        "West Karbi Anglong"
+      ]
+    },
+    {
+      "id": "manipur",
+      "name": "Manipur",
+      "districts": [
+        "Bishnupur",
+        "Chandel",
+        "Churachandpur",
+        "Imphal East",
+        "Imphal West",
+        "Jiribam",
+        "Kakching",
+        "Kamjong",
+        "Kangpokpi",
+        "Noney",
+        "Pherzawl",
+        "Senapati",
+        "Tamenglong",
+        "Tengnoupal",
+        "Thoubal",
+        "Ukhrul"
+      ]
+    },
+    {
+      "id": "meghalaya",
+      "name": "Meghalaya",
+      "districts": [
+        "East Garo Hills",
+        "East Jaintia Hills",
+        "East Khasi Hills",
+        "Eastern West Khasi Hills",
+        "North Garo Hills",
+        "Ri Bhoi",
+        "South Garo Hills",
+        "South West Garo Hills",
+        "South West Khasi Hills",
+        "West Garo Hills",
+        "West Jaintia Hills",
+        "West Khasi Hills"
+      ]
+    },
+    {
+      "id": "mizoram",
+      "name": "Mizoram",
+      "districts": [
+        "Aizawl",
+        "Champhai",
+        "Hnahthial",
+        "Khawzawl",
+        "Kolasib",
+        "Lawngtlai",
+        "Lunglei",
+        "Mamit",
+        "Saitual",
+        "Serchhip",
+        "Siaha"
+      ]
+    },
+    {
+      "id": "nagaland",
+      "name": "Nagaland",
+      "districts": [
+        "Chumoukedima",
+        "Dimapur",
+        "Kiphire",
+        "Kohima",
+        "Longleng",
+        "Meluri",
+        "Mokokchung",
+        "Mon",
+        "Niuland",
+        "Noklak",
+        "Peren",
+        "Phek",
+        "Shamator",
+        "Tseminyu",
+        "Tuensang",
+        "Wokha",
+        "Zunheboto"
+      ]
+    },
+    {
+      "id": "sikkim",
+      "name": "Sikkim",
+      "districts": [
+        "Gangtok",
+        "Gyalshing",
+        "Mangan",
+        "Namchi",
+        "Pakyong",
+        "Soreng"
+      ]
+    },
+    {
+      "id": "tripura",
+      "name": "Tripura",
+      "districts": [
+        "Dhalai",
+        "Gomati",
+        "Khowai",
+        "North Tripura",
+        "Sepahijala",
+        "South Tripura",
+        "Unakoti",
+        "West Tripura"
+      ]
+    }
+  ]
+}
