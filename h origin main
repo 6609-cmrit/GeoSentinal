@@ -1,0 +1,194 @@
+[33m3e997b0[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Add backend changes
+ .gitignore                                         |    0
+ Backend/.env                                       |    4 [32m+[m
+ .../app/api/__pycache__/locations.cpython-312.pyc  |  Bin [31m3272[m -> [32m8632[m bytes
+ Backend/app/api/__pycache__/zones.cpython-312.pyc  |  Bin [31m2692[m -> [32m5643[m bytes
+ Backend/app/api/locations.py                       |  276 [32m+[m[31m-[m
+ Backend/app/api/zones.py                           |  229 [32m+[m[31m-[m
+ .../app/models/__pycache__/zones.cpython-312.pyc   |  Bin [31m1106[m -> [32m5642[m bytes
+ Backend/app/models/zones.py                        |  245 [32m+[m[31m-[m
+ .../__pycache__/weather_service.cpython-312.pyc    |  Bin [31m0[m -> [32m2029[m bytes
+ Backend/app/services/sms_service.py                |    0
+ Backend/app/services/weather_service.py            |   76 [32m+[m
+ Backend/geosentinel.db                             |  Bin [31m32768[m -> [32m32768[m bytes
+ Frontend/index.html                                | 2427 [32m++++++[m[31m------[m
+ .../certifi-2026.7.22.dist-info/INSTALLER          |    1 [32m+[m
+ .../certifi-2026.7.22.dist-info/METADATA           |   78 [32m+[m
+ .../certifi-2026.7.22.dist-info/RECORD             |   18 [32m+[m
+ .../certifi-2026.7.22.dist-info/WHEEL              |    5 [32m+[m
+ .../certifi-2026.7.22.dist-info/licenses/LICENSE   |   20 [32m+[m
+ .../certifi-2026.7.22.dist-info/top_level.txt      |    1 [32m+[m
+ venv/Lib/site-packages/certifi/__init__.py         |    4 [32m+[m
+ venv/Lib/site-packages/certifi/__main__.py         |   12 [32m+[m
+ .../certifi/__pycache__/__init__.cpython-312.pyc   |  Bin [31m0[m -> [32m310[m bytes
+ .../certifi/__pycache__/__main__.cpython-312.pyc   |  Bin [31m0[m -> [32m625[m bytes
+ .../certifi/__pycache__/core.cpython-312.pyc       |  Bin [31m0[m -> [32m2057[m bytes
+ venv/Lib/site-packages/certifi/cacert.pem          | 3959 [32m++++++++++++++++++++[m
+ venv/Lib/site-packages/certifi/core.py             |   83 [32m+[m
+ venv/Lib/site-packages/certifi/py.typed            |    0
+ venv/Lib/site-packages/certifi/tests/__init__.py   |    0
+ .../tests/__pycache__/__init__.cpython-312.pyc     |  Bin [31m0[m -> [32m189[m bytes
+ .../tests/__pycache__/test_certify.cpython-312.pyc |  Bin [31m0[m -> [32m1524[m bytes
+ .../site-packages/certifi/tests/test_certify.py    |   18 [32m+[m
+ .../charset_normalizer-3.5.1.dist-info/INSTALLER   |    1 [32m+[m
+ .../charset_normalizer-3.5.1.dist-info/METADATA    |  878 [32m+++++[m
+ .../charset_normalizer-3.5.1.dist-info/RECORD      |   35 [32m+[m
+ .../charset_normalizer-3.5.1.dist-info/WHEEL       |    5 [32m+[m
+ .../entry_points.txt                               |    2 [32m+[m
+ .../licenses/LICENSE                               |   21 [32m+[m
+ .../top_level.txt                                  |    1 [32m+[m
+ .../site-packages/charset_normalizer/__init__.py   |   48 [32m+[m
+ .../site-packages/charset_normalizer/__main__.py   |    6 [32m+[m
+ .../__pycache__/__init__.cpython-312.pyc           |  Bin [31m0[m -> [32m1768[m bytes
+ .../__pycache__/__main__.cpython-312.pyc           |  Bin [31m0[m -> [32m351[m bytes
+ .../__pycache__/api.cpython-312.pyc                |  Bin [31m0[m -> [32m21842[m bytes
+ .../__pycache__/cd.cpython-312.pyc                 |  Bin [31m0[m -> [32m14060[m bytes
+ .../__pycache__/constant.cpython-312.pyc           |  Bin [31m0[m -> [32m55112[m bytes
+ .../__pycache__/legacy.cpython-312.pyc             |  Bin [31m0[m -> [32m2967[m bytes
+ .../__pycache__/md.cpython-312.pyc                 |  Bin [31m0[m -> [32m33468[m bytes
+ .../__pycache__/models.cpython-312.pyc             |  Bin [31m0[m -> [32m17728[m bytes
+ .../__pycache__/utils.cpython-312.pyc              |  Bin [31m0[m -> [32m15181[m bytes
+ .../__pycache__/version.cpython-312.pyc            |  Bin [31m0[m -> [32m378[m bytes
+ venv/Lib/site-packages/charset_normalizer/api.py   |  934 [32m+++++[m
+ .../charset_normalizer/cd.cp312-win_amd64.pyd      |  Bin [31m0[m -> [32m117248[m bytes
+ venv/Lib/site-packages/charset_normalizer/cd.py    |  467 [32m+++[m
+ .../charset_normalizer/cli/__init__.py             |    8 [32m+[m
+ .../charset_normalizer/cli/__main__.py             |  363 [32m++[m
+ .../cli/__pycache__/__init__.cpython-312.pyc       |  Bin [31m0[m -> [32m339[m bytes
+ .../cli/__pycache__/__main__.cpython-312.pyc       |  Bin [31m0[m -> [32m13660[m bytes
+ .../site-packages/charset_normalizer/constant.py   | 2496 [32m++++++++++++[m
+ .../Lib/site-packages/charset_normalizer/legacy.py |   79 [32m+[m
+ .../charset_normalizer/md.cp312-win_amd64.pyd      |  Bin [31m0[m -> [32m193536[m bytes
+ venv/Lib/site-packages/charset_normalizer/md.py    | 1063 [32m++++++[m
+ .../Lib/site-packages/charset_normalizer/models.py |  387 [32m++[m
+ venv/Lib/site-packages/charset_normalizer/py.typed |    0
+ venv/Lib/site-packages/charset_normalizer/utils.py |  452 [32m+++[m
+ .../site-packages/charset_normalizer/version.py    |    8 [32m+[m
+ .../requests-2.34.2.dist-info/INSTALLER            |    1 [32m+[m
+ .../requests-2.34.2.dist-info/METADATA             |  120 [32m+[m
+ .../site-packages/requests-2.34.2.dist-info/RECORD |   47 [32m+[m
+ .../requests-2.34.2.dist-info/REQUESTED            |    0
+ .../site-packages/requests-2.34.2.dist-info/WHEEL  |    5 [32m+[m
+ .../requests-2.34.2.dist-info/licenses/LICENSE     |  175 [32m+[m
+ .../requests-2.34.2.dist-info/licenses/NOTICE      |    2 [32m+[m
+ .../requests-2.34.2.dist-info/top_level.txt        |    1 [32m+[m
+ venv/Lib/site-packages/requests/__init__.py        |  219 [32m++[m
+ .../requests/__pycache__/__init__.cpython-312.pyc  |  Bin [31m0[m -> [32m5774[m bytes
+ .../__pycache__/__version__.cpython-312.pyc        |  Bin [31m0[m -> [32m577[m bytes
+ .../__pycache__/_internal_utils.cpython-312.pyc    |  Bin [31m0[m -> [32m2121[m bytes
+ .../requests/__pycache__/_types.cpython-312.pyc    |  Bin [31m0[m -> [32m7259[m bytes
+ .../requests/__pycache__/adapters.cpython-312.pyc  |  Bin [31m0[m -> [32m29615[m bytes
+ .../requests/__pycache__/api.cpython-312.pyc       |  Bin [31m0[m -> [32m8039[m bytes
+ .../requests/__pycache__/auth.cpython-312.pyc      |  Bin [31m0[m -> [32m15779[m bytes
+ .../requests/__pycache__/certs.cpython-312.pyc     |  Bin [31m0[m -> [32m659[m bytes
+ .../requests/__pycache__/compat.cpython-312.pyc    |  Bin [31m0[m -> [32m2487[m bytes
+ .../requests/__pycache__/cookies.cpython-312.pyc   |  Bin [31m0[m -> [32m28358[m bytes
+ .../__pycache__/exceptions.cpython-312.pyc         |  Bin [31m0[m -> [32m7945[m bytes
+ .../requests/__pycache__/help.cpython-312.pyc      |  Bin [31m0[m -> [32m4311[m bytes
+ .../requests/__pycache__/hooks.cpython-312.pyc     |  Bin [31m0[m -> [32m1578[m bytes
+ .../requests/__pycache__/models.cpython-312.pyc    |  Bin [31m0[m -> [32m41903[m bytes
+ .../requests/__pycache__/packages.cpython-312.pyc  |  Bin [31m0[m -> [32m1111[m bytes
+ .../requests/__pycache__/sessions.cpython-312.pyc  |  Bin [31m0[m -> [32m31901[m bytes
+ .../__pycache__/status_codes.cpython-312.pyc       |  Bin [31m0[m -> [32m6133[m bytes
+ .../__pycache__/structures.cpython-312.pyc         |  Bin [31m0[m -> [32m7278[m bytes
+ .../requests/__pycache__/utils.cpython-312.pyc     |  Bin [31m0[m -> [32m40022[m bytes
+ venv/Lib/site-packages/requests/__version__.py     |   14 [32m+[m
+ venv/Lib/site-packages/requests/_internal_utils.py |   51 [32m+[m
+ venv/Lib/site-packages/requests/_types.py          |  183 [32m+[m
+ venv/Lib/site-packages/requests/adapters.py        |  748 [32m++++[m
+ venv/Lib/site-packages/requests/api.py             |  180 [32m+[m
+ venv/Lib/site-packages/requests/auth.py            |  354 [32m++[m
+ venv/Lib/site-packages/requests/certs.py           |   18 [32m+[m
+ venv/Lib/site-packages/requests/compat.py          |  113 [32m+[m
+ venv/Lib/site-packages/requests/cookies.py         |  625 [32m+++[m
+ venv/Lib/site-packages/requests/exceptions.py      |  162 [32m+[m
+ venv/Lib/site-packages/requests/help.py            |  134 [32m+[m
+ venv/Lib/site-packages/requests/hooks.py           |   48 [32m+[m
+ venv/Lib/site-packages/requests/models.py          | 1180 [32m++++++[m
+ venv/Lib/site-packages/requests/packages.py        |   23 [32m+[m
+ venv/Lib/site-packages/requests/py.typed           |    0
+ venv/Lib/site-packages/requests/sessions.py        |  920 [32m+++++[m
+ venv/Lib/site-packages/requests/status_codes.py    |  128 [32m+[m
+ venv/Lib/site-packages/requests/structures.py      |  130 [32m+[m
+ venv/Lib/site-packages/requests/utils.py           | 1155 [32m++++++[m
+ .../urllib3-2.8.0.dist-info/INSTALLER              |    1 [32m+[m
+ .../site-packages/urllib3-2.8.0.dist-info/METADATA |  175 [32m+[m
+ .../site-packages/urllib3-2.8.0.dist-info/RECORD   |   79 [32m+[m
+ .../site-packages/urllib3-2.8.0.dist-info/WHEEL    |    4 [32m+[m
+ .../urllib3-2.8.0.dist-info/licenses/LICENSE.txt   |   21 [32m+[m
+ venv/Lib/site-packages/urllib3/__init__.py         |  211 [32m++[m
+ .../urllib3/__pycache__/__init__.cpython-312.pyc   |  Bin [31m0[m -> [32m7308[m bytes
+ .../__pycache__/_base_connection.cpython-312.pyc   |  Bin [31m0[m -> [32m6870[m bytes
+ .../__pycache__/_collections.cpython-312.pyc       |  Bin [31m0[m -> [32m22865[m bytes
+ .../__pycache__/_request_methods.cpython-312.pyc   |  Bin [31m0[m -> [32m10600[m bytes
+ .../urllib3/__pycache__/_version.cpython-312.pyc   |  Bin [31m0[m -> [32m637[m bytes
+ .../urllib3/__pycache__/connection.cpython-312.pyc |  Bin [31m0[m -> [32m41807[m bytes
+ .../__pycache__/connectionpool.cpython-312.pyc     |  Bin [31m0[m -> [32m40660[m bytes
+ .../urllib3/__pycache__/exceptions.cpython-312.pyc |  Bin [31m0[m -> [32m16602[m bytes
+ .../urllib3/__pycache__/fields.cpython-312.pyc     |  Bin [31m0[m -> [32m11991[m bytes
+ .../urllib3/__pycache__/filepost.cpython-312.pyc   |  Bin [31m0[m -> [32m3477[m bytes
+ .../__pycache__/poolmanager.cpython-312.pyc        |  Bin [31m0[m -> [32m25072[m bytes
+ .../urllib3/__pycache__/response.cpython-312.pyc   |  Bin [31m0[m -> [32m58516[m bytes
+ venv/Lib/site-packages/urllib3/_base_connection.py |  167 [32m+[m
+ venv/Lib/site-packages/urllib3/_collections.py     |  490 [32m+++[m
+ venv/Lib/site-packages/urllib3/_request_methods.py |  278 [32m++[m
+ venv/Lib/site-packages/urllib3/_version.py         |   24 [32m+[m
+ venv/Lib/site-packages/urllib3/connection.py       | 1204 [32m++++++[m
+ venv/Lib/site-packages/urllib3/connectionpool.py   | 1211 [32m++++++[m
+ venv/Lib/site-packages/urllib3/contrib/__init__.py |    0
+ .../contrib/__pycache__/__init__.cpython-312.pyc   |  Bin [31m0[m -> [32m191[m bytes
+ .../contrib/__pycache__/pyopenssl.cpython-312.pyc  |  Bin [31m0[m -> [32m30240[m bytes
+ .../contrib/__pycache__/socks.cpython-312.pyc      |  Bin [31m0[m -> [32m8031[m bytes
+ .../urllib3/contrib/emscripten/__init__.py         |   17 [32m+[m
+ .../__pycache__/__init__.cpython-312.pyc           |  Bin [31m0[m -> [32m988[m bytes
+ .../__pycache__/connection.cpython-312.pyc         |  Bin [31m0[m -> [32m10380[m bytes
+ .../emscripten/__pycache__/fetch.cpython-312.pyc   |  Bin [31m0[m -> [32m28637[m bytes
+ .../emscripten/__pycache__/request.cpython-312.pyc |  Bin [31m0[m -> [32m1419[m bytes
+ .../__pycache__/response.cpython-312.pyc           |  Bin [31m0[m -> [32m12337[m bytes
+ .../urllib3/contrib/emscripten/connection.py       |  260 [32m++[m
+ .../contrib/emscripten/emscripten_fetch_worker.js  |  110 [32m+[m
+ .../urllib3/contrib/emscripten/fetch.py            |  726 [32m++++[m
+ .../urllib3/contrib/emscripten/request.py          |   22 [32m+[m
+ .../urllib3/contrib/emscripten/response.py         |  281 [32m++[m
+ .../Lib/site-packages/urllib3/contrib/pyopenssl.py |  603 [32m+++[m
+ venv/Lib/site-packages/urllib3/contrib/socks.py    |  226 [32m++[m
+ venv/Lib/site-packages/urllib3/exceptions.py       |  335 [32m++[m
+ venv/Lib/site-packages/urllib3/fields.py           |  341 [32m++[m
+ venv/Lib/site-packages/urllib3/filepost.py         |   89 [32m+[m
+ venv/Lib/site-packages/urllib3/http2/__init__.py   |   53 [32m+[m
+ .../http2/__pycache__/__init__.cpython-312.pyc     |  Bin [31m0[m -> [32m1744[m bytes
+ .../http2/__pycache__/connection.cpython-312.pyc   |  Bin [31m0[m -> [32m16968[m bytes
+ .../http2/__pycache__/probe.cpython-312.pyc        |  Bin [31m0[m -> [32m3655[m bytes
+ venv/Lib/site-packages/urllib3/http2/connection.py |  357 [32m++[m
+ venv/Lib/site-packages/urllib3/http2/probe.py      |   87 [32m+[m
+ venv/Lib/site-packages/urllib3/poolmanager.py      |  677 [32m++++[m
+ venv/Lib/site-packages/urllib3/py.typed            |    2 [32m+[m
+ venv/Lib/site-packages/urllib3/response.py         | 1526 [32m++++++++[m
+ venv/Lib/site-packages/urllib3/util/__init__.py    |   42 [32m+[m
+ .../util/__pycache__/__init__.cpython-312.pyc      |  Bin [31m0[m -> [32m1004[m bytes
+ .../util/__pycache__/connection.cpython-312.pyc    |  Bin [31m0[m -> [32m4685[m bytes
+ .../urllib3/util/__pycache__/proxy.cpython-312.pyc |  Bin [31m0[m -> [32m1216[m bytes
+ .../util/__pycache__/request.cpython-312.pyc       |  Bin [31m0[m -> [32m10197[m bytes
+ .../util/__pycache__/response.cpython-312.pyc      |  Bin [31m0[m -> [32m2875[m bytes
+ .../urllib3/util/__pycache__/retry.cpython-312.pyc |  Bin [31m0[m -> [32m21627[m bytes
+ .../urllib3/util/__pycache__/ssl_.cpython-312.pyc  |  Bin [31m0[m -> [32m15831[m bytes
+ .../__pycache__/ssl_match_hostname.cpython-312.pyc |  Bin [31m0[m -> [32m5393[m bytes
+ .../util/__pycache__/ssltransport.cpython-312.pyc  |  Bin [31m0[m -> [32m13304[m bytes
+ .../util/__pycache__/timeout.cpython-312.pyc       |  Bin [31m0[m -> [32m11688[m bytes
+ .../urllib3/util/__pycache__/url.cpython-312.pyc   |  Bin [31m0[m -> [32m20681[m bytes
+ .../urllib3/util/__pycache__/util.cpython-312.pyc  |  Bin [31m0[m -> [32m1993[m bytes
+ .../urllib3/util/__pycache__/wait.cpython-312.pyc  |  Bin [31m0[m -> [32m3439[m bytes
+ venv/Lib/site-packages/urllib3/util/connection.py  |  137 [32m+[m
+ venv/Lib/site-packages/urllib3/util/proxy.py       |   43 [32m+[m
+ venv/Lib/site-packages/urllib3/util/request.py     |  299 [32m++[m
+ venv/Lib/site-packages/urllib3/util/response.py    |  101 [32m+[m
+ venv/Lib/site-packages/urllib3/util/retry.py       |  569 [32m+++[m
+ venv/Lib/site-packages/urllib3/util/ssl_.py        |  481 [32m+++[m
+ .../urllib3/util/ssl_match_hostname.py             |  153 [32m+[m
+ .../Lib/site-packages/urllib3/util/ssltransport.py |  271 [32m++[m
+ venv/Lib/site-packages/urllib3/util/timeout.py     |  275 [32m++[m
+ venv/Lib/site-packages/urllib3/util/url.py         |  577 [32m+++[m
+ venv/Lib/site-packages/urllib3/util/util.py        |   42 [32m+[m
+ venv/Lib/site-packages/urllib3/util/wait.py        |  124 [32m+[m
+ venv/Scripts/normalizer.exe                        |  Bin [31m0[m -> [32m108436[m bytes
+ 192 files changed, 32756 insertions(+), 1381 deletions(-)

@@ -56,340 +56,32 @@
 <body class="bg-surface font-sans text-on-surface antialiased min-h-screen">
 
   <!-- PERSISTENT TOP HEADER -->
-   <!-- ============================================================
-     GEOSENTINEL HEADER
-     ============================================================ -->
-<header
-  class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest
-         shadow-[0_1px_8px_rgba(0,0,0,0.06)]
-         border-b border-surface-container-high"
->
-  <div class="h-16 w-full px-6 flex items-center gap-4">
-
-    <!-- LOGO -->
-    <div
-      class="flex items-center gap-3 min-w-max cursor-pointer"
-      onclick="navigateTo('dashboard')"
-    >
-      <img
-        src="assets/geosentinel-logo.png"
-        alt="GeoSentinel Logo"
-        class="h-12 w-auto object-contain"
-      />
-
-      <div class="hidden lg:flex flex-col">
-        <span class="font-bold text-lg text-primary tracking-tight">
-          GeoSentinel
-        </span>
-
-        <span class="text-[10px] text-on-surface-variant">
-          Landslide Early Warning & Spatial Intelligence
-        </span>
-      </div>
-    </div>
-
-
-    <!-- SEARCH -->
-    <div class="flex-1 max-w-xl relative">
-
-      <div
-        class="flex items-center gap-2
-               bg-surface-container-low
-               px-3 py-2
-               rounded-lg
-               border border-surface-container-high
-               cursor-text"
-        onclick="focusGlobalSearch()"
-      >
-        <span class="material-symbols-outlined text-secondary text-[20px]">
-          search
-        </span>
-
-        <input
-          id="global-search"
-          type="text"
-          class="w-full bg-transparent text-sm
-                 text-on-surface
-                 placeholder:text-outline
-                 focus:outline-none"
-          placeholder="Search districts, zones, villages..."
-          autocomplete="off"
-          oninput="handleGlobalSearch(this.value)"
-          onfocus="openSearchResults()"
+  <header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.06)] border-b border-surface-container-high">
+    <div class="h-16 w-full px-6 flex items-center justify-between gap-4">
+      <!-- GeoSentinel Logo -->
+      <div class="flex items-center min-w-max cursor-pointer" onclick="navigateTo('dashboard')">
+        <img
+          alt="GeoSentinel Logo"
+          class="h-11 w-auto object-contain"
+          src="assets/geosentinel-logo.png"
         />
       </div>
 
-      <!-- SEARCH RESULTS -->
-      <div
-        id="global-search-results"
-        class="hidden absolute top-full left-0 right-0 mt-2
-               bg-surface-container-lowest
-               border border-surface-container-high
-               rounded-xl shadow-xl
-               overflow-hidden z-[100]"
-      >
+      <!-- Header Actions -->
+      <div class="flex items-center gap-3 min-w-max">
+        <button type="button" onclick="openLocationModal()" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface text-xs font-medium hover:bg-surface-container-high"><span class="material-symbols-outlined text-primary text-[18px]">pin_drop</span><span id="header-location-label">Kohima District, Nagaland</span><span class="material-symbols-outlined text-secondary text-[16px]">expand_more</span></button>
+        <div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-error-container text-on-error-container">
+          <span class="material-symbols-outlined text-error text-[16px] animate-pulse">warning</span>
+          <span class="text-[11px] font-mono uppercase font-bold">Level-3 Warning</span>
+        </div>
+        <button onclick="navigateTo('scenario-simulator')" class="hidden xl:flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary-container text-on-primary text-xs font-semibold shadow hover:opacity-95 transition-opacity" type="button">
+          <span class="material-symbols-outlined text-[16px]">cyclone</span>
+          <span>Simulator</span>
+        </button>
+        <button type="button" onclick="openProfileModal()" class="flex items-center gap-2 pl-1 hover:opacity-90"><div class="hidden 2xl:flex flex-col text-right"><span id="header-profile-name" class="text-xs font-bold text-on-surface">Dr. S. Jamir</span><span id="header-profile-role" class="text-[10px] text-on-surface-variant font-mono">DDMA Kohima</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold shadow-sm"><span class="material-symbols-outlined text-[18px]">person</span></div></button>
       </div>
-
     </div>
-
-
-    <!-- LOCATION -->
-    <div class="relative">
-
-      <button
-        id="location-selector"
-        type="button"
-        onclick="toggleLocationMenu()"
-        class="flex items-center gap-2
-               px-3 py-2
-               rounded-lg
-               bg-surface-container
-               text-on-surface
-               text-sm font-medium
-               hover:bg-surface-container-high"
-      >
-        <span class="material-symbols-outlined text-primary text-[19px]">
-          location_on
-        </span>
-
-        <span id="current-location">
-          Kohima District, Nagaland
-        </span>
-
-        <span class="material-symbols-outlined text-secondary text-[18px]">
-          expand_more
-        </span>
-      </button>
-
-
-      <!-- LOCATION MENU -->
-      <div
-        id="location-menu"
-        class="hidden absolute right-0 top-full mt-2
-               w-80
-               bg-surface-container-lowest
-               border border-surface-container-high
-               rounded-xl
-               shadow-xl
-               z-[100]
-               overflow-hidden"
-      >
-
-        <div class="p-3 border-b border-surface-container">
-
-          <div
-            class="flex items-center gap-2
-                   bg-surface-container-low
-                   px-3 py-2
-                   rounded-lg"
-          >
-            <span class="material-symbols-outlined text-secondary">
-              search
-            </span>
-
-            <input
-              id="location-search"
-              type="text"
-              placeholder="Search district or location..."
-              class="w-full bg-transparent
-                     text-sm
-                     focus:outline-none"
-              oninput="filterLocations(this.value)"
-            />
-          </div>
-
-        </div>
-
-
-        <div class="px-4 py-3">
-
-          <div class="text-[10px] font-mono font-bold
-                      text-secondary uppercase mb-2">
-            Districts
-          </div>
-
-          <div
-            id="location-list"
-            class="max-h-72 overflow-y-auto space-y-1"
-          >
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- WARNING STATUS -->
-    <div
-      class="hidden xl:flex items-center gap-2
-             px-3 py-2
-             rounded-lg
-             bg-error-container
-             text-on-error-container"
-    >
-      <span class="material-symbols-outlined text-error text-[18px]">
-        warning
-      </span>
-
-      <span class="text-[11px] font-mono uppercase font-bold">
-        Level-3 Warning
-      </span>
-    </div>
-
-
-    <!-- PROFILE -->
-    <div class="relative">
-
-      <button
-        type="button"
-        onclick="toggleProfileMenu()"
-        class="flex items-center gap-2
-               hover:bg-surface-container
-               rounded-lg px-2 py-1.5"
-      >
-
-        <div class="hidden xl:flex flex-col text-right">
-
-          <span
-            id="profile-name"
-            class="text-xs font-bold text-on-surface"
-          >
-            Dr. S. Jamir
-          </span>
-
-          <span
-            id="profile-role"
-            class="text-[10px]
-                   text-on-surface-variant
-                   font-mono"
-          >
-            DDMA Kohima
-          </span>
-
-        </div>
-
-
-        <div
-          class="w-9 h-9
-                 rounded-full
-                 bg-primary
-                 flex items-center justify-center
-                 text-on-primary
-                 shadow-sm"
-        >
-          <span class="material-symbols-outlined text-[19px]">
-            person
-          </span>
-        </div>
-
-      </button>
-
-
-      <!-- PROFILE MENU -->
-      <div
-        id="profile-menu"
-        class="hidden absolute right-0 top-full mt-2
-               w-64
-               bg-surface-container-lowest
-               border border-surface-container-high
-               rounded-xl
-               shadow-xl
-               z-[100]
-               overflow-hidden"
-      >
-
-        <div class="p-4 border-b border-surface-container">
-
-          <div class="font-bold text-on-surface">
-            <span id="profile-menu-name">
-              Dr. S. Jamir
-            </span>
-          </div>
-
-          <div
-            id="profile-menu-role"
-            class="text-xs text-on-surface-variant mt-1"
-          >
-            DDMA Kohima
-          </div>
-
-        </div>
-
-
-        <div class="p-2">
-
-          <button
-            onclick="openProfileModal()"
-            class="w-full text-left px-3 py-2.5
-                   rounded-lg
-                   hover:bg-surface-container
-                   flex items-center gap-3 text-sm"
-          >
-            <span class="material-symbols-outlined text-primary">
-              person
-            </span>
-
-            View Profile
-          </button>
-
-
-          <button
-            onclick="openProfileModal()"
-            class="w-full text-left px-3 py-2.5
-                   rounded-lg
-                   hover:bg-surface-container
-                   flex items-center gap-3 text-sm"
-          >
-            <span class="material-symbols-outlined text-primary">
-              settings
-            </span>
-
-            Profile Settings
-          </button>
-
-
-          <button
-            onclick="openProfileModal()"
-            class="w-full text-left px-3 py-2.5
-                   rounded-lg
-                   hover:bg-surface-container
-                   flex items-center gap-3 text-sm"
-          >
-            <span class="material-symbols-outlined text-primary">
-              account_circle
-            </span>
-
-            Account Details
-          </button>
-
-
-          <div class="border-t border-surface-container my-2"></div>
-
-
-          <button
-            onclick="showToast('Logout is disabled in prototype mode')"
-            class="w-full text-left px-3 py-2.5
-                   rounded-lg
-                   hover:bg-error-container
-                   flex items-center gap-3 text-sm"
-          >
-            <span class="material-symbols-outlined text-error">
-              logout
-            </span>
-
-            Logout
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-</header>
+  </header>
 
   <!-- PERSISTENT SIDEBAR NAVIGATION -->
   <aside class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-low z-40 flex flex-col justify-between pt-4 pb-4 border-r border-surface-container-high shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
@@ -482,10 +174,7 @@
                 <span>CRITICAL ZONES</span>
                 <span class="px-1.5 py-0.5 rounded bg-error-container text-on-error-container text-[10px] font-bold">L3 ALERT</span>
               </div>
-              <div class="text-2xl font-bold text-error mt-2">
-  <span id="critical-zones-count">0</span>
-  <span class="text-xs text-secondary font-normal">+1 last 6h</span>
-</div>
+              <div class="text-2xl font-bold text-error mt-2"><span id="dash-critical-zones">0</span> <span class="text-xs text-secondary font-normal">zones</span></div>
               <div class="text-xs text-on-surface-variant mt-1">Slope instability &gt;85%</div>
             </div>
 
@@ -494,7 +183,7 @@
                 <span>HIGH RISK ZONES</span>
                 <span class="px-1.5 py-0.5 rounded bg-orange-100 text-orange-800 text-[10px] font-bold">MONITOR</span>
               </div>
-              <div id="high-risk-zones-count" class="text-2xl font-bold text-on-surface mt-2">0 <span class="text-xs text-secondary font-normal">zones</span></div>
+              <div class="text-2xl font-bold text-on-surface mt-2"><span id="dash-high-risk-zones">0</span> <span class="text-xs text-secondary font-normal">zones</span></div>
               <div class="text-xs text-on-surface-variant mt-1">Dzükou &amp; NH-2 Corridor</div>
             </div>
 
@@ -503,9 +192,7 @@
                 <span>VILLAGES AT RISK</span>
                 <span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary text-[10px] font-bold">DEMO</span>
               </div>
-              <div class="text-2xl font-bold text-on-surface mt-2">
-              <span id="villages-at-risk-count">0</span> 
-              <span class="text-xs text-secondary font-normal">~18,400 souls</span></div>
+              <div class="text-2xl font-bold text-on-surface mt-2"><span id="dash-villages-at-risk">0</span> <span class="text-xs text-secondary font-normal" id="dash-villages-label">villages</span></div>
               <div class="text-xs text-on-surface-variant mt-1">Within active runout zones</div>
             </div>
 
@@ -514,39 +201,16 @@
                 <span>ROAD SEGMENTS</span>
                 <span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary text-[10px] font-bold">NH-29</span>
               </div>
-              <div class="text-2xl font-bold text-on-surface mt-2">
-  <span id="road-segments-count">0</span>
-  <span class="text-xs text-secondary font-normal">Chokepoints</span>
-</div>
+              <div class="text-2xl font-bold text-on-surface mt-2"><span id="dash-road-segments">0</span> <span class="text-xs text-secondary font-normal">segments</span></div>
               <div class="text-xs text-on-surface-variant mt-1">Single-lane convoys</div>
             </div>
-            <!-- TOTAL EXPOSED POPULATION -->
-<div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high">
-    <div class="flex justify-between items-center text-xs text-secondary">
-        <span>EXPOSED POPULATION</span>
-        <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary">
-            LIVE
-        </span>
-    </div>
-
-    <div class="text-2xl font-bold text-on-surface mt-2">
-        <span id="total-exposed-population">0</span>
-    </div>
-
-    <div class="text-xs text-secondary mt-1">
-        Residents across monitored zones
-    </div>
-</div>
 
             <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm">
               <div class="flex justify-between items-center text-xs text-secondary font-mono font-semibold">
                 <span>ACTIVE ALERTS</span>
                 <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary text-[10px] font-bold font-mono">CAP-IN</span>
               </div>
-              <div class="text-2xl font-bold text-primary mt-2">
-  <span id="active-alerts-count">0</span>
-  <span class="text-xs text-secondary font-normal">Dispatches</span>
-</div>
+              <div class="text-2xl font-bold text-primary mt-2"><span id="dash-active-alerts">0</span> <span class="text-xs text-secondary font-normal">alerts</span></div>
               <div class="text-xs text-on-surface-variant mt-1">3 Evacuation orders live</div>
             </div>
           </div>
@@ -595,22 +259,22 @@
                 </svg>
 
                 <!-- Interactive Map Pin 1: CRITICAL SECTOR (Clickable -> Risk Analysis) -->
-                <div onclick="navigateToRiskAnalysis('Kohima South Sector (NH-29 Bypass)')" class="absolute left-[360px] top-[140px] z-20 cursor-pointer group transition-transform hover:scale-105">
+                <div onclick="navigateToRiskAnalysis('Kohima Zone A')" class="absolute left-[420px] top-[120px] z-10 cursor-pointer group transition-transform hover:scale-105">
                   <div class="bg-surface-container-lowest/95 backdrop-blur-md p-2.5 rounded-xl shadow-xl border-2 border-error flex flex-col gap-1 max-w-[210px]">
                     <div class="flex items-center justify-between">
-                      <span class="px-1.5 py-0.5 rounded bg-error text-on-primary text-[10px] font-mono font-bold uppercase animate-pulse">Critical 88/100</span>
+                      <span id="dash-zone-a-badge" class="px-1.5 py-0.5 rounded bg-error text-on-primary text-[10px] font-mono font-bold uppercase animate-pulse">Loading…</span>
                       <span class="text-[10px] text-secondary font-mono">km 14.8</span>
                     </div>
-                    <span class="text-xs font-bold text-on-surface leading-tight">Kohima South Sector</span>
+                    <span id="dash-zone-a-name" class="text-xs font-bold text-on-surface leading-tight">Kohima Zone A</span>
                     <span class="text-[10px] text-error font-medium">Click to open Risk Analysis →</span>
                   </div>
                 </div>
 
                 <!-- Interactive Map Pin 2: Dzükou Approach -->
-                <div onclick="navigateToRiskAnalysis('Dzükou Approach Slope')" class="absolute left-[150px] top-[240px] z-10 cursor-pointer group transition-transform hover:scale-105">
+                <div onclick="navigateToRiskAnalysis('Zubza Valley Zone B')" class="absolute left-[150px] top-[240px] z-10 cursor-pointer group transition-transform hover:scale-105">
                   <div class="bg-surface-container-lowest/90 backdrop-blur p-2 rounded-lg shadow-md border border-orange-300 flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-orange-500"></span>
-                    <span class="text-xs font-semibold text-on-surface">Dzükou Slope (79/100)</span>
+                    <span id="dash-zone-b-label" class="text-xs font-semibold text-on-surface">Zubza Valley Zone B — loading…</span>
                   </div>
                 </div>
 
@@ -638,13 +302,13 @@
                 </div>
 
                 <!-- Threat Item 1 -->
-                <div onclick="navigateToRiskAnalysis('Kohima South Sector (NH-29 Bypass)')" class="p-3 rounded-xl bg-error-container/20 border border-error/30 hover:border-error cursor-pointer transition-all mb-2.5 group">
+                <div onclick="navigateToRiskAnalysis('Kohima Zone A')" class="p-3 rounded-xl bg-error-container/20 border border-error/30 hover:border-error cursor-pointer transition-all mb-2.5 group">
                   <div class="flex justify-between items-start">
                     <div>
-                      <span class="text-xs font-bold text-error">#01 Kohima South Sector</span>
-                      <p class="text-xs text-on-surface mt-0.5">NH-29 Bypass km 14.8 • High InSAR creep</p>
+                      <span  id="dash-threat-a-factor"
+                             class="text-xs text-secondary font-mono">High InSAR Creep</span>
                     </div>
-                    <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-error text-on-primary">88/100</span>
+                    <span id="dash-threat-a-score" class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-error text-on-primary">Loading…</span>
                   </div>
                   <div class="flex items-center justify-between mt-2 pt-2 border-t border-error/20 text-[11px] text-secondary">
                     <span>6 villages exposed</span>
@@ -653,13 +317,13 @@
                 </div>
 
                 <!-- Threat Item 2 -->
-                <div onclick="navigateToRiskAnalysis('Dzükou Approach Slope')" class="p-3 rounded-xl bg-orange-50 border border-orange-200 hover:border-orange-400 cursor-pointer transition-all mb-2.5 group">
+                <div onclick="navigateToRiskAnalysis('Zubza Valley Zone B')" class="p-3 rounded-xl bg-orange-50 border border-orange-200 hover:border-orange-400 cursor-pointer transition-all mb-2.5 group">
                   <div class="flex justify-between items-start">
                     <div>
-                      <span class="text-xs font-bold text-orange-800">#02 Dzükou Approach Slope</span>
+                      <span id="dash-threat-b-name" class="text-xs font-bold text-orange-800">#02 Zubza Valley Zone B</span>
                       <p class="text-xs text-on-surface mt-0.5">Steep scarp saturation index &gt; 0.78</p>
                     </div>
-                    <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-orange-500 text-white">79/100</span>
+                    <span id="dash-threat-b-score" class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-orange-500 text-white">Loading…</span>
                   </div>
                   <div class="flex items-center justify-between mt-2 pt-2 border-t border-orange-200 text-[11px] text-secondary">
                     <span>4 villages • 1 bridge span</span>
@@ -668,13 +332,13 @@
                 </div>
 
                 <!-- Threat Item 3 -->
-                <div onclick="navigateToRiskAnalysis('Zubza Riverbank Cut')" class="p-3 rounded-xl bg-amber-50 border border-amber-200 hover:border-amber-400 cursor-pointer transition-all group">
+                <div onclick="navigateToRiskAnalysis('Medziphema Zone C')" class="p-3 rounded-xl bg-amber-50 border border-amber-200 hover:border-amber-400 cursor-pointer transition-all group">
                   <div class="flex justify-between items-start">
                     <div>
-                      <span class="text-xs font-bold text-amber-800">#03 Zubza Riverbank Cut</span>
+                      <span id="dash-threat-c-name" class="text-xs font-bold text-amber-800">#03 Medziphema Zone C</span>
                       <p class="text-xs text-on-surface mt-0.5">Toe erosion over 380m stretch</p>
                     </div>
-                    <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-amber-500 text-white">76/100</span>
+                    <span id="dash-threat-c-score" class="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-amber-500 text-white">Loading…</span>
                   </div>
                   <div class="flex items-center justify-between mt-2 pt-2 border-t border-amber-200 text-[11px] text-secondary">
                     <span>3 villages • NH-29 Main</span>
@@ -760,126 +424,59 @@
             </div>
 
             <!-- Map Viewport -->
-<div class="lg:col-span-6 bg-slate-200 rounded-xl border border-surface-container-high shadow-sm relative h-[500px] overflow-hidden">
+            <div class="lg:col-span-6 bg-slate-200 rounded-xl border border-surface-container-high shadow-sm relative h-[500px] overflow-hidden">
+              <svg class="w-full h-full" viewBox="0 0 600 500" preserveAspectRatio="none">
+                <defs>
+                  <radialGradient id="map-crit-grad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#dc2626" stop-opacity="0.85"/>
+                    <stop offset="50%" stop-color="#f97316" stop-opacity="0.5"/>
+                    <stop offset="100%" stop-color="#ea580c" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+                <rect width="100%" height="100%" fill="#f1f5f9"/>
+                <!-- Topo curves -->
+                <path d="M 0 150 Q 200 90 400 200 T 600 170" fill="none" stroke="#cbd5e1" stroke-width="1.5"/>
+                <path d="M 0 250 Q 250 180 450 300 T 600 260" fill="none" stroke="#cbd5e1" stroke-width="1.5"/>
+                <path d="M 0 350 Q 300 280 500 390 T 600 360" fill="none" stroke="#cbd5e1" stroke-width="1.5"/>
+                <!-- Road Highway -->
+                <path d="M 40 460 C 200 400 350 330 420 260 S 500 160 580 100" fill="none" stroke="#2563eb" stroke-width="6" stroke-linecap="round"/>
+                <path d="M 40 460 C 200 400 350 330 420 260 S 500 160 580 100" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="6 6"/>
+                <!-- Hazard Cone -->
+                <ellipse cx="420" cy="260" rx="95" ry="65" fill="url(#map-crit-grad)"/>
+                <circle cx="420" cy="260" r="14" fill="#dc2626" class="animate-ping"/>
+                <circle cx="420" cy="260" r="7" fill="#ffffff" stroke="#dc2626" stroke-width="3"/>
+              </svg>
 
-  <!-- SVG Map -->
-  <svg
-    class="w-full h-full"
-    viewBox="0 0 600 500"
-    preserveAspectRatio="none"
-  >
-    <defs>
-      <radialGradient id="map-crit-grad" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#dc2626" stop-opacity="0.85"/>
-        <stop offset="50%" stop-color="#f97316" stop-opacity="0.5"/>
-        <stop offset="100%" stop-color="#ea580c" stop-opacity="0"/>
-      </radialGradient>
-    </defs>
-
-    <!-- Background -->
-    <rect
-      width="100%"
-      height="100%"
-      fill="#f1f5f9"
-    />
-
-    <!-- Topographic curves -->
-    <path
-      d="M 0 150 Q 200 90 400 200 T 600 170"
-      fill="none"
-      stroke="#cbd5e1"
-      stroke-width="1.5"
-    />
-
-    <path
-      d="M 0 250 Q 250 180 450 300 T 600 260"
-      fill="none"
-      stroke="#cbd5e1"
-      stroke-width="1.5"
-    />
-
-    <path
-      d="M 0 350 Q 300 280 500 390 T 600 360"
-      fill="none"
-      stroke="#cbd5e1"
-      stroke-width="1.5"
-    />
-
-    <!-- NH-29 Highway -->
-    <path
-      d="M 40 460 C 200 400 350 330 420 260 S 500 160 580 100"
-      fill="none"
-      stroke="#2563eb"
-      stroke-width="6"
-      stroke-linecap="round"
-    />
-
-    <path
-      d="M 40 460 C 200 400 350 330 420 260 S 500 160 580 100"
-      fill="none"
-      stroke="#ffffff"
-      stroke-width="2"
-      stroke-dasharray="6 6"
-    />
-
-    <!-- Hazard Cone -->
-    <ellipse
-      cx="420"
-      cy="260"
-      rx="95"
-      ry="65"
-      fill="url(#map-crit-grad)"
-    />
-
-    <circle
-      cx="420"
-      cy="260"
-      r="14"
-      fill="#dc2626"
-      class="animate-ping"
-    />
-
-    <circle
-      cx="420"
-      cy="260"
-      r="7"
-      fill="#ffffff"
-      stroke="#dc2626"
-      stroke-width="3"
-    />
-  </svg>
-
-  <!-- Dynamic Risk Zone Markers -->
-  <div
-    id="dynamic-risk-markers"
-    class="absolute inset-0 pointer-events-none"
-  ></div>
-
-</div>
+              <!-- Interactive Pin -->
+              <div onclick="navigateToRiskAnalysis(window.geoSentinelSelectedZoneName || 'Kohima Zone A')" class="absolute left-[360px] top-[210px] bg-surface-container-lowest/95 backdrop-blur p-2 rounded shadow-lg border border-error flex items-center gap-1.5 cursor-pointer">
+                <span class="w-2.5 h-2.5 rounded-full bg-error animate-pulse"></span>
+                <span id="risk-map-pin-label" class="text-xs font-bold text-on-surface">Sector 4-A: Kohima Ridge</span>
+              </div>
+            </div>
 
             <!-- Selected Zone Inspector -->
             <div class="lg:col-span-3 bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm flex flex-col justify-between">
               <div>
                 <div class="flex items-center justify-between pb-2 border-b border-surface-container">
                   <span class="text-xs font-mono uppercase font-bold text-secondary">Zone Inspector</span>
-                  <span class="px-2 py-0.5 rounded bg-error-container text-on-error-container text-[10px] font-mono font-bold uppercase">HIGH RISK</span>
+                  <span id="risk-map-tier" class="px-2 py-0.5 rounded bg-error-container text-on-error-container text-[10px] font-mono font-bold uppercase">HIGH RISK</span>
                 </div>
-                <h3 id="risk-zone-name" class="text-base font-bold text-on-surface mt-3">KOHIMA - ZONE A</h3>
+                <h3 id="risk-map-zone-name" class="text-base font-bold text-on-surface mt-3">KOHIMA - ZONE A</h3>
                 <span class="text-xs text-secondary">South Ridge / NH-29 Bypass Lifeline</span>
 
                 <div class="my-4 p-3 rounded-lg bg-orange-50 border border-orange-200">
                   <div class="flex justify-between items-baseline">
-                    <span class="text-3xl font-extrabold text-orange-600"><span id="risk-score">82</span><span class="text-xs text-secondary">/ 100</span></span>
-                    <span id="risk-confidence" class="text-xs font-mono font-bold text-orange-800">87% AI Conf.</span>
+                    <span id="risk-map-score" class="text-3xl font-extrabold text-orange-600">82 <span class="text-xs text-secondary">/ 100</span></span>
+                    <span class="text-xs font-mono font-bold text-orange-800">87% AI Conf.</span>
                   </div>
                   <span class="text-xs text-on-surface-variant block mt-1">Hazard Index Breached Threshold</span>
                 </div>
 
                 <div class="space-y-2 text-xs text-on-surface-variant">
-                  <strong id="risk-rainfall" class="text-on-surface">128 mm (Crit &gt;95)</strong>
-                  <div class="flex justify-between"><span>Slope Incline:</span><strong id="risk-slope" class="text-on-surface">34.2° (Unstable)</strong></div>
-                  <div class="flex justify-between"><span>InSAR Creep:</span><strong id="risk-insar" class="text-error font-mono">4.8 mm/h</strong>
-                  <div class="flex justify-between"><span>Exposed Souls:</span><strong id="risk-population" class="text-on-surface">2,450 residents</strong></div>
+                  <div class="flex justify-between"><span>24h Rainfall:</span><strong class="text-on-surface">128 mm (Crit &gt;95)</strong></div>
+                  <div class="flex justify-between"><span>Slope Incline:</span><strong class="text-on-surface">34.2° (Unstable)</strong></div>
+                  <div class="flex justify-between"><span>InSAR Creep:</span><strong class="text-error font-mono">4.8 mm/h</strong></div>
+                  <div class="flex justify-between"><span>Exposed Souls:</span><strong class="text-on-surface">2,450 residents</strong></div>
                 </div>
               </div>
 
@@ -924,12 +521,11 @@
                 <span class="material-symbols-outlined text-[18px]">download</span>
                 <span>Audit Dossier</span>
               </button>
-              </div>
- </div>
+            </div>
+          </div>
 
-
- <!-- Computed Metric & Shapley Breakdown -->
- <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Computed Metric & Shapley Breakdown -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             <!-- Left: Composite Risk Gauge -->
             <div class="lg:col-span-4 bg-surface-container-lowest p-6 rounded-2xl border border-surface-container-high shadow-sm flex flex-col justify-between">
@@ -939,14 +535,15 @@
                   <div class="w-32 h-32 relative flex items-center justify-center">
                     <svg class="w-32 h-32 -rotate-90" viewBox="0 0 36 36">
                       <path class="text-surface-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
-                      <path class="text-error" stroke-dasharray="82, 100" stroke-linecap="round" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+                      <path id="risk-analysis-ring" class="text-error" stroke-dasharray="82, 100" stroke-linecap="round" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
                     </svg>
                     <div class="absolute flex flex-col items-center">
-                      <span class="text-3xl font-extrabold text-on-surface">82</span>
-                      <span class="text-[10px] font-mono font-bold text-error uppercase">HIGH RISK</span>
+                      <span id="risk-analysis-score" class="text-3xl font-extrabold text-on-surface">--</span>
+                      <span id="risk-analysis-tier" class="text-[10px] font-mono font-bold uppercase bg-surface-container text-secondary">LOADING</span>
                     </div>
                   </div>
-                  <span class="text-xs text-secondary font-mono mt-1">Confidence Interval: 87% (High)</span>
+                  <span class="text-xs text-secondary font-mono mt-1">Prototype confidence: 87% (stored zone metadata)</span>
+                  <span id="risk-analysis-rainfall" class="text-xs text-primary font-mono font-bold mt-1">Loading rainfall…</span>
                 </div>
               </div>
 
@@ -971,7 +568,7 @@
                   <div>
                     <div class="flex justify-between text-xs mb-1">
                       <span class="font-bold text-on-surface">Heavy Antecedent &amp; 24h Cumulative Rainfall</span>
-                      <span class="text-error font-mono font-bold">42% weight (128mm vs 95mm threshold)</span>
+                      <span id="risk-analysis-rainfall-weight" class="text-error font-mono font-bold">Loading…</span>
                     </div>
                     <div class="w-full h-2.5 rounded-full bg-surface-container overflow-hidden">
                       <div class="h-full bg-error rounded-full" style="width: 78%;"></div>
@@ -982,7 +579,7 @@
                   <div>
                     <div class="flex justify-between text-xs mb-1">
                       <span class="font-bold text-on-surface">Steep Slope Gradient (&gt;30° Fail Angle)</span>
-                      <span class="text-orange-600 font-mono font-bold">31% weight (Measured: 34.2°)</span>
+                      <span id="risk-analysis-slope-weight" class="text-orange-600 font-mono font-bold">Loading…</span>
                     </div>
                     <div class="w-full h-2.5 rounded-full bg-surface-container overflow-hidden">
                       <div class="h-full bg-orange-500 rounded-full" style="width: 62%;"></div>
@@ -993,7 +590,7 @@
                   <div>
                     <div class="flex justify-between text-xs mb-1">
                       <span class="font-bold text-on-surface">Historical Landslide Recurrence</span>
-                      <span class="text-secondary font-mono font-bold">18% weight (17 events in 250m grid)</span>
+                      <span id="risk-analysis-insar-weight" class="text-secondary font-mono font-bold">Loading…</span>
                     </div>
                     <div class="w-full h-2.5 rounded-full bg-surface-container overflow-hidden">
                       <div class="h-full bg-secondary rounded-full" style="width: 44%;"></div>
@@ -1076,11 +673,26 @@
                       <span class="px-2 py-0.5 rounded bg-error text-on-primary text-[10px] font-mono font-bold uppercase">Priority 01 Critical</span>
                       <span class="text-xs text-secondary font-mono">High InSAR Creep</span>
                     </div>
-                    <h3 class="text-lg font-bold text-on-surface mt-1">Kohima Zone A (South Ridge / NH-29 Bypass)</h3>
-                    <span class="text-xs text-secondary">25.6751° N, 94.1086° E • Sub-division Kigwema</span>
+                    <h3
+    id="dash-threat-a-name"
+    class="text-lg font-bold text-on-surface mt-1"
+>
+    Kohima Zone A (South Ridge / NH-29 Bypass)
+</h3>
+                    <p
+    id="dash-threat-a-location"
+    class="text-xs text-secondary"
+>
+    25.6751° N, 94.1086° E • Sub-division Kigwema
+</p>
                   </div>
                   <div class="text-right">
-                    <span class="text-3xl font-extrabold text-error">94.2</span>
+                    <span
+    id="dash-threat-a-score"
+    class="text-3xl font-extrabold text-error"
+>
+    94.2
+</span>
                     <span class="text-[10px] text-secondary font-mono block">Scale / 100</span>
                   </div>
                 </div>
@@ -1218,7 +830,7 @@
           </div>
 
           <!-- Active Alerts List -->
-          <div id="alerts-list" class="grid grid-cols-1 gap-4">
+          <div class="grid grid-cols-1 gap-4">
             
             <!-- Alert 1 -->
             <div class="bg-surface-container-lowest p-5 rounded-2xl border-l-4 border-error border-y border-r border-surface-container-high shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -1347,16 +959,26 @@
             </div>
 
             <!-- Right 7-cols: Verified Feed -->
-<div id="field-reports-list" class="lg:col-span-7 flex flex-col gap-3">
+            <div class="lg:col-span-7 flex flex-col gap-3">
+              <span class="text-xs font-mono uppercase font-bold text-secondary">Verified Ground Truth Stream (38 reports / 24h)</span>
 
-    <span class="text-xs font-mono uppercase font-bold text-secondary">
-        Verified Ground Truth Stream (38 reports / 24h)
-    </span>
-
-    <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm flex flex-col gap-2">
-        ...
-        <!-- existing report -->
-    </div>
+              <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm flex flex-col gap-2">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span id="dash-threat-a-priority"
+                            class="px-2 py-0.5 rounded bg-error text-on-primary text-[10px] font-mono font-bold uppercase">PRIORITY 01 CRITICAL</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-on-surface mt-1">CRITICAL SECTOR: Tension Crack Expansion (18cm)</h4>
+                    <span class="text-xs text-secondary">Inspector T. Angami (PWD-NL-409) • Kohima NH-29 Bypass</span>
+                  </div>
+                </div>
+                <p class="text-xs text-on-surface-variant">Rapid displacement observed along toe embankment. Saturated clay soil oozing from fracture line.</p>
+                <div class="flex items-center gap-2 pt-2 border-t border-surface-container">
+                  <button onclick="showToast('Field Report approved & ingested into Physics-ML')" class="px-3 py-1 bg-emerald-600 text-white rounded text-xs font-bold">Verify &amp; Approve for Model</button>
+                  <button onclick="showToast('SDRF dispatched to inspection site')" class="px-3 py-1 bg-primary text-white rounded text-xs font-bold">Dispatch SDRF Team</button>
+                </div>
+              </div>
 
               <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm flex flex-col gap-2">
                 <div class="flex justify-between items-start">
@@ -1408,7 +1030,27 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <div class="flex items-center gap-2">
-                  <span class="text-lg font-bold text-on-surface">Rainfall Hazard Intensity Stress Engine</span>
+
+              <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <div class="flex items-center gap-3">
+                  <label for="sim-zone-select" class="font-bold text-on-surface">
+                    Simulation Zone:
+                  </label>
+                  <select
+                    id="sim-zone-select"
+                    onchange="onSimZoneChange(this.value)"
+                    class="px-3 py-2 rounded-lg bg-surface-container border border-outline text-on-surface font-medium"
+                  >
+                    <option value="zone-a">Kohima Zone A</option>
+                    <option value="zone-b">Zubza Valley Zone B</option>
+                    <option value="zone-c">Medziphema Zone C</option>
+                  </select>
+                </div>
+                <span id="sim-zone-status" class="text-xs font-mono text-secondary">
+                  Backend simulation
+                </span>
+              </div>
+<span class="text-lg font-bold text-on-surface">Rainfall Hazard Intensity Stress Engine</span>
                   <span class="px-2 py-0.5 rounded bg-surface-container text-primary text-[10px] font-mono font-bold uppercase">Hydro-Geotech v3.2</span>
                 </div>
                 <span class="text-xs text-on-surface-variant">Drag the slider or click snap presets to simulate cloudburst conditions.</span>
@@ -1429,31 +1071,9 @@
                   <span class="material-symbols-outlined text-primary text-[20px]">water_drop</span>
                   <span class="font-bold text-on-surface">Simulated Cumulative Precipitation (24-Hour Horizon):</span>
                   <span id="sim-slider-label" class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-mono font-bold text-sm">100 mm/24h</span>
+                </div>
+                <span class="text-secondary font-mono">Infiltration: 0.74 • 3-Day Saturation Base</span>
               </div>
-
-<div class="flex items-center gap-3 mb-3">
-  <label
-    for="sim-zone-select"
-    class="font-bold text-on-surface"
-  >
-    Simulation Zone:
-  </label>
-
-  <select
-    id="sim-zone-select"
-    onchange="onSimZoneChange(this.value)"
-    class="px-3 py-2 rounded-lg bg-surface-container border border-outline text-on-surface font-medium"
-  >
-    <option value="zone-a">Kohima Zone A</option>
-    <option value="zone-b">Zubza Valley Zone B</option>
-    <option value="zone-c">Medziphema Zone C</option>
-  </select>
-</div>
-
-<span class="text-secondary font-mono">
-  Infiltration: 0.74 • 3-Day Saturation Base
-</span>
-</div>
               <input id="sim-rainfall-slider" type="range" min="40" max="180" value="100" step="1" oninput="onSimSliderMove(this.value)" class="w-full h-3 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary"/>
               <div class="flex justify-between text-[11px] font-mono text-secondary px-1">
                 <span>40mm (Dry)</span>
@@ -1618,7 +1238,7 @@
 
     <!-- PERSISTENT FOOTER -->
     <footer class="w-full bg-surface-container-low py-3 px-6 border-t border-surface-container flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-on-surface-variant">
-      <span>State Disaster Management Authority • Smart India Hackathon 2026</span>
+      <span>State Disaster Management Authority • Smart India Hackathon 2024</span>
       <span class="font-mono text-secondary">GeoSentinel v2.4 (Northeast Regional Command)</span>
     </footer>
   </div>
@@ -1649,43 +1269,43 @@
       <div class="p-6 space-y-4 text-xs max-h-[75vh] overflow-y-auto">
         <div>
           <label class="font-bold text-on-surface block mb-1">1. Target Jurisdiction &amp; Hazard Sector</label>
-          <select class="w-full p-2.5 rounded-lg bg-surface-container-low border border-surface-container text-on-surface">
-            <option>Kohima District - Zone A (South Ridge / NH-29 Lifeline Corridor)</option>
-            <option>Zubza Valley Incline (Zone B)</option>
-            <option>Medziphema Slope Cut (Zone C)</option>
+          <select id="alert-zone-select" onchange="onAlertZoneChange(this.value)" class="w-full p-2.5 rounded-lg bg-surface-container-low border border-surface-container text-on-surface">
+            <option value="zone-a">Kohima District - Zone A (South Ridge / NH-29 Lifeline Corridor)</option>
+            <option value="zone-b">Zubza Valley Incline (Zone B)</option>
+            <option value="zone-c">Medziphema Slope Cut (Zone C)</option>
           </select>
         </div>
 
-        <div>
-          <label class="font-bold text-on-surface block mb-1">2. Alert Severity &amp; Mandatory Escalation</label>
-          <div class="grid grid-cols-3 gap-2">
+       <div class="grid grid-cols-3 gap-2">
 
     <button
+        id="alert-severity-yellow"
         type="button"
-        id="severity-yellow"
         onclick="selectAlertSeverity('YELLOW')"
-        class="p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center">
+        class="p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center"
+    >
         Yellow - Advisory
     </button>
 
     <button
+        id="alert-severity-orange"
         type="button"
-        id="severity-orange"
         onclick="selectAlertSeverity('ORANGE')"
-        class="p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center">
+        class="p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center"
+    >
         Orange - Watch
     </button>
 
     <button
+        id="alert-severity-red"
         type="button"
-        id="severity-red"
         onclick="selectAlertSeverity('RED')"
-        class="p-2 rounded-lg bg-error text-on-primary font-bold text-center">
+        class="p-2 rounded-lg bg-error text-on-primary font-bold text-center"
+    >
         Red - Warning / Evac
     </button>
 
 </div>
-        </div>
 
         <div>
           <label class="font-bold text-on-surface block mb-1">3. Multi-Language Broadcast Payload (CAP XML &amp; Cell Broadcast)</label>
@@ -1730,1127 +1350,1321 @@
     </div>
   </div>
 
+  <div id="location-modal" class="fixed inset-0 z-[80] hidden items-center justify-center bg-slate-950/40 backdrop-blur-sm p-4"><div class="w-full max-w-2xl bg-surface-container-lowest rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden"><div class="p-5 flex items-center justify-between border-b border-surface-container-high"><div><h3 class="text-lg font-bold">Select Monitoring Location</h3><p class="text-xs text-on-surface-variant">Choose a Northeast India state and district.</p></div><button type="button" onclick="closeModal('location-modal')" class="w-9 h-9 rounded-full hover:bg-surface-container"><span class="material-symbols-outlined">close</span></button></div><div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-xs font-bold mb-1.5">State</label><select id="location-state-select" onchange="populateDistrictSelect(this.value)" class="w-full p-3 rounded-lg bg-surface-container-low border border-surface-container text-sm"></select></div><div><label class="block text-xs font-bold mb-1.5">District</label><select id="location-district-select" class="w-full p-3 rounded-lg bg-surface-container-low border border-surface-container text-sm"></select></div></div><div class="p-4 border-t border-surface-container-high bg-surface-container-low flex justify-end gap-2"><button type="button" onclick="closeModal('location-modal')" class="px-4 py-2 text-xs font-semibold">Cancel</button><button type="button" onclick="applySelectedLocation()" class="px-5 py-2 rounded-lg bg-primary text-on-primary text-xs font-bold">Apply Location</button></div></div></div>
+  <div id="profile-modal" class="fixed inset-0 z-[80] hidden items-center justify-center bg-slate-950/40 backdrop-blur-sm p-4"><div class="w-full max-w-lg bg-surface-container-lowest rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden"><div class="p-5 flex items-center justify-between border-b border-surface-container-high"><div><h3 class="text-lg font-bold">Officer Profile</h3><p class="text-xs text-on-surface-variant">Command access details</p></div><button type="button" onclick="closeModal('profile-modal')" class="w-9 h-9 rounded-full"><span class="material-symbols-outlined">close</span></button></div><div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-xs font-bold mb-1.5">Full Name</label><input id="profile-name-input" class="w-full p-3 rounded-lg bg-surface-container-low border border-surface-container text-sm" value="Dr. S. Jamir"></div><div><label class="block text-xs font-bold mb-1.5">Role</label><input id="profile-role-input" class="w-full p-3 rounded-lg bg-surface-container-low border border-surface-container text-sm" value="DDMA Kohima"></div><div><label class="block text-xs font-bold mb-1.5">Organization</label><input id="profile-org-input" class="w-full p-3 rounded-lg bg-surface-container-low border border-surface-container text-sm" value="District Disaster Management Authority"></div><div><label class="block text-xs font-bold mb-1.5">Access Level</label><input id="profile-access-input" class="w-full p-3 rounded-lg bg-surface-container-low border border-surface-container text-sm" value="Emergency Response Officer"></div><div><label class="block text-xs font-bold mb-1.5">Email</label><input id="profile-email-input" type="email" class="w-full p-3 rounded-lg bg-surface-container-low border border-surface-container text-sm" value="ddma.kohima@geosentinel.local"></div><div><label class="block text-xs font-bold mb-1.5">Phone</label><input id="profile-phone-input" class="w-full p-3 rounded-lg bg-surface-container-low border border-surface-container text-sm" value="+91 XXXXX XXXXX"></div></div><div class="p-4 border-t border-surface-container-high bg-surface-container-low flex justify-end gap-2"><button type="button" onclick="closeModal('profile-modal')" class="px-4 py-2 text-xs">Close</button><button type="button" onclick="saveProfileModal()" class="px-5 py-2 rounded-lg bg-primary text-on-primary text-xs font-bold">Save Details</button></div></div></div>
   <!-- FLOATING TOAST NOTIFICATION -->
   <div id="app-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700">
     <span class="material-symbols-outlined text-primary-fixed text-[20px]" id="toast-icon">info</span>
     <span class="text-xs font-medium" id="toast-msg">Notification text</span>
-  </div> 
-   <!-- JAVASCRIPT: UNIFIED INTERACTIVE ROUTER & LOGIC -->
+  </div>
 
-<script>
+  <!-- JAVASCRIPT: UNIFIED INTERACTIVE ROUTER & LOGIC -->
+  <script>
 
+    const API_BASE_URL = "http://127.0.0.1:8000";
 
-    // ============================================================
-    // GEOSENTINEL LOCATION DATABASE
-    // ============================================================
-
-    const LOCATION_DATABASE = [
-        {
-            id: "kohima",
-            name: "Kohima District",
-            state: "Nagaland",
-            zones: ["zone-a"]
-        },
-        {
-            id: "dimapur",
-            name: "Dimapur District",
-            state: "Nagaland",
-            zones: []
-        },
-        {
-            id: "peren",
-            name: "Peren District",
-            state: "Nagaland",
-            zones: []
-        },
-        {
-            id: "wokha",
-            name: "Wokha District",
-            state: "Nagaland",
-            zones: []
-        },
-        {
-            id: "mokokchung",
-            name: "Mokokchung District",
-            state: "Nagaland",
-            zones: []
-        },
-        {
-            id: "mon",
-            name: "Mon District",
-            state: "Nagaland",
-            zones: []
-        },
-        {
-            id: "tuensang",
-            name: "Tuensang District",
-            state: "Nagaland",
-            zones: []
-        },
-        {
-            id: "zunheboto",
-            name: "Zunheboto District",
-            state: "Nagaland",
-            zones: []
-        },
-        {
-            id: "phek",
-            name: "Phek District",
-            state: "Nagaland",
-            zones: []
-        }
-    ];
-
-    let selectedLocationId = "kohima";
-
-
-    // ============================================================
-    // NAVIGATION ROUTER
-    // ============================================================
-
+    // Navigation Router across all 7 screens
     function navigateTo(viewId) {
-        // your existing code here...
-    }
+      // Hide all screen views
+      document.querySelectorAll('.screen-view').forEach(view => {
+        view.classList.remove('active');
+      });
+      // Show selected screen view
+      const targetView = document.getElementById(`view-${viewId}`);
+      if (targetView) {
+        targetView.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
 
-
-    
-let selectedAlertSeverity = "RED";
-
-function selectAlertSeverity(severity) {
-    selectedAlertSeverity = severity;
-
-    const yellow = document.getElementById("severity-yellow");
-    const orange = document.getElementById("severity-orange");
-    const red = document.getElementById("severity-red");
-
-    // Reset all buttons
-    yellow.className =
-        "p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center";
-
-    orange.className =
-        "p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center";
-
-    red.className =
-        "p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center";
-
-    // Highlight selected button
-    if (severity === "YELLOW") {
-        yellow.className =
-            "p-2 rounded-lg bg-yellow-400 text-black font-bold text-center";
-    }
-
-    if (severity === "ORANGE") {
-        orange.className =
-            "p-2 rounded-lg bg-orange-500 text-white font-bold text-center";
-    }
-
-    if (severity === "RED") {
-        red.className =
-            "p-2 rounded-lg bg-error text-on-primary font-bold text-center";
-    }
-
-    console.log("Selected alert severity:", severity);
-    showToast(`Alert severity changed to ${severity}`);
-}
-
-function navigateTo(viewId) {
-    console.log("NAVIGATION CLICKED:", viewId);
-
-    // Hide all screens
-    document.querySelectorAll(".screen-view").forEach(function(screen) {
-        screen.classList.remove("active");
-    });
-
-    // Find selected screen
-    const targetView = document.getElementById("view-" + viewId);
-
-    if (!targetView) {
-        console.error("SCREEN NOT FOUND:", "view-" + viewId);
-        return;
-    }
-
-    // Show selected screen
-    targetView.classList.add("active");
-
-    // Update sidebar active button
-    document.querySelectorAll("#sidebar-nav .nav-item").forEach(function(button) {
-        const buttonView = button.getAttribute("data-nav");
-
-        if (buttonView === viewId) {
-            button.className =
-                "nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-semibold text-left w-full bg-primary-container text-on-primary shadow-sm";
+      // Update sidebar nav active state
+      document.querySelectorAll('#sidebar-nav .nav-item').forEach(btn => {
+        if (btn.getAttribute('data-nav') === viewId) {
+          btn.className = "nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-semibold text-left w-full bg-primary-container text-on-primary shadow-sm";
         } else {
-            button.className =
-                "nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-medium text-left w-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface";
+          btn.className = "nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-medium text-left w-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface";
         }
-    });
+      });
+    }
 
-    // Scroll to top
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+    // Direct hotspot router to Risk Analysis
+    async function navigateToRiskAnalysis(zoneName) {
+      const zoneMap = {
+        'Kohima Zone A': 'zone-a',
+        'Kohima South Sector (NH-29 Bypass)': 'zone-a',
+        'Zubza Valley Zone B': 'zone-b',
+        'Dzükou Approach Slope': 'zone-b',
+        'Medziphema Zone C': 'zone-c',
+        'Zubza Riverbank Cut': 'zone-c'
+      };
+      const zoneId = zoneMap[zoneName] || 'zone-a';
+      navigateTo('risk-analysis');
+      const titleEl = document.getElementById('risk-analysis-title');
+      if (titleEl) titleEl.innerText = `AI Risk Analysis & Contributing Factors: ${zoneName}`;
 
-    console.log("NAVIGATION SUCCESS:", viewId);
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/zones/${zoneId}/risk`);
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        const data = await res.json();
+        updateRiskAnalysisUI(data);
+        showToast(`Live risk loaded for ${data.zone_name}`);
+      } catch (err) {
+        showToast('⚠️ Risk data failed to load: ' + err.message);
+      }
+    }
+
+    // Modal controls
     function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-
-    if (modal) {
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-    } else {
-        console.error("MODAL NOT FOUND:", modalId);
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
     }
-}
 
-    function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-
-    if (modal) {
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-    } else {
-        console.error("MODAL NOT FOUND:", modalId);
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
     }
-}
 
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-
-    if (modal) {
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-    } else {
-        console.error("MODAL NOT FOUND:", modalId);
+    async function authorizeAndSendAlert() {
+      const zoneId = document.getElementById('alert-zone-select')?.value || 'zone-a';
+      const severity = selectedAlertSeverity || 'RED';
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/alerts`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            zone_id: zoneId,
+            severity,
+            title: 'Mandatory Evacuation: Kohima South Ridge (NH-29 km 14.8)',
+            message: 'EMERGENCY LANDSLIDE WARNING (GeoSentinel/SDMA): Severe slope failure imminent.',
+            channels: ['sms', 'vhf', 'ndma_sachet', 'siren']
+          })
+        });
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        const responsePayload = await res.json();
+        const alert = responsePayload.alert;
+        closeModal('alert-modal');
+        showToast(`🚨 Alert ${alert.id} authorized & transmitted.`);
+      } catch (err) {
+        showToast('⚠️ Alert failed to send: ' + err.message);
+      }
     }
-}
-}
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
 
-    if (modal) {
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-    } else {
-        console.error("MODAL NOT FOUND:", modalId);
-    }
-}
+    const NORTHEAST_LOCATIONS={"Arunachal Pradesh":["Anjaw","Bichom","Changlang","Dibang Valley","East Kameng","East Siang","Kamle","Keyi Panyor","Kra Daadi","Kurung Kumey","Leparada","Lohit","Longding","Lower Dibang Valley","Lower Siang","Lower Subansiri","Namsai","Pakke Kessang","Papum Pare","Shi Yomi","Siang","Tawang","Tirap","Upper Siang","Upper Subansiri","West Kameng","West Siang"],"Assam":["Bajali","Baksa","Barpeta","Biswanath","Bongaigaon","Cachar","Charaideo","Chirang","Darrang","Dhemaji","Dhubri","Dibrugarh","Dima Hasao","Goalpara","Golaghat","Hailakandi","Hojai","Jorhat","Kamrup","Kamrup Metro","Karbi Anglong","Kokrajhar","Lakhimpur","Majuli","Marigaon","Nagaon","Nalbari","Sivasagar","Sonitpur","South Salmara-Mankachar","Tamulpur","Tinsukia","Udalguri","West Karbi Anglong","Sribhumi"],"Manipur":["Bishnupur","Chandel","Churachandpur","Imphal East","Imphal West","Jiribam","Kakching","Kamjong","Kangpokpi","Noney","Pherzawl","Senapati","Tamenglong","Tengnoupal","Thoubal","Ukhrul"],"Meghalaya":["East Garo Hills","East Jaintia Hills","East Khasi Hills","Eastern West Khasi Hills","North Garo Hills","Ri Bhoi","South Garo Hills","South West Garo Hills","South West Khasi Hills","West Garo Hills","West Jaintia Hills","West Khasi Hills"],"Mizoram":["Aizawl","Champhai","Hnahthial","Khawzawl","Kolasib","Lawngtlai","Lunglei","Mamit","Saitual","Serchhip","Siaha"],"Nagaland":["Chumoukedima","Dimapur","Kiphire","Kohima","Longleng","Meluri","Mokokchung","Mon","Niuland","Noklak","Peren","Phek","Shamator","Tseminyu","Tuensang","Wokha","Zunheboto"],"Sikkim":["Gangtok","Gyalshing","Mangan","Namchi","Pakyong","Soreng"],"Tripura":["Dhalai","Gomati","Khowai","North Tripura","Sepahijala","South Tripura","Unakoti","West Tripura"]};
+    function openLocationModal(){const s=document.getElementById('location-state-select');if(!s)return;s.innerHTML=Object.keys(NORTHEAST_LOCATIONS).map(x=>`<option>${x}</option>`).join('');s.value='Nagaland';populateDistrictSelect('Nagaland');document.getElementById('location-district-select').value='Kohima';openModal('location-modal');}
+    function populateDistrictSelect(state){const d=document.getElementById('location-district-select');if(!d)return;d.innerHTML=(NORTHEAST_LOCATIONS[state]||[]).map(x=>`<option>${x}</option>`).join('');}
+   async function applySelectedLocation() {
 
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
+    const state =
+        document.getElementById(
+            'location-state-select'
+        )?.value;
 
-    if (modal) {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-    } else {
-        console.error("MODAL NOT FOUND:", modalId);
-    }
-}
+    const district =
+        document.getElementById(
+            'location-district-select'
+        )?.value;
 
-function showToast(message) {
-    const toast = document.getElementById('app-toast');
-    const messageEl = document.getElementById('toast-msg');
 
-    if (!toast || !messageEl) {
-        console.log(message);
+    if (!state || !district) {
+        showToast('Please select a state and district');
         return;
     }
 
-    messageEl.innerText = message;
 
-    toast.classList.remove('translate-y-24', 'opacity-0');
-    toast.classList.add('translate-y-0', 'opacity-100');
+    // Build the same location ID used by the backend
+   const locationId =
+    state
+        .toLowerCase()
+        .replace(/\s+/g, '-') +
+    '-' +
+    district
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/\./g, '');
 
-    setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-24', 'opacity-0');
-    }, 3000);
+    const headerLabel =
+    document.getElementById(
+        'header-location-label'
+    );
+
+if (headerLabel) {
+    headerLabel.textContent =
+        `${district} District, ${state}`;
 }
 
-async function authorizeAndSendAlert() {
+
+    // Save complete location information
+    localStorage.setItem(
+        'geosentinel_location',
+        JSON.stringify({
+            state: state,
+            district: district,
+            location_id: locationId
+        })
+    );
+
+
+    console.log(
+        'Selected location:',
+        {
+            state,
+            district,
+            location_id: locationId
+        }
+    );
+
+
+    closeModal('location-modal');
+
+    showToast(
+        `Location changed to ${district}, ${state}`
+    );
+
+
+    // Load monitoring data immediately
+    await loadSavedLocationData();
+}
+    function openProfileModal(){let p={};try{p=JSON.parse(localStorage.getItem('geosentinel_profile')||'{}')||{};}catch(_){}p={name:'Dr. S. Jamir',role:'DDMA Kohima',org:'District Disaster Management Authority',access:'Emergency Response Officer',email:'ddma.kohima@geosentinel.local',phone:'+91 XXXXX XXXXX',...p};['name','role','org','access','email','phone'].forEach(k=>document.getElementById(`profile-${k}-input`).value=p[k]);openModal('profile-modal');}
+    function saveProfileModal(){const p={name:document.getElementById('profile-name-input').value.trim()||'Dr. S. Jamir',role:document.getElementById('profile-role-input').value.trim()||'DDMA Kohima',org:document.getElementById('profile-org-input').value.trim(),access:document.getElementById('profile-access-input').value.trim(),email:document.getElementById('profile-email-input').value.trim(),phone:document.getElementById('profile-phone-input').value.trim()};localStorage.setItem('geosentinel_profile',JSON.stringify(p));document.getElementById('header-profile-name').textContent=p.name;document.getElementById('header-profile-role').textContent=p.role;closeModal('profile-modal');showToast('Profile details saved successfully.');}
+
+    // Field report submission
+    async function submitFieldReport() {
+      const location = document.getElementById('field-input-location').value;
+      const type = document.getElementById('field-input-type').value;
+      const notes = document.getElementById('field-input-notes').value;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/field-reports`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            zone_id: 'zone-a',
+            severity: 'Critical',
+            type: type,
+            location: location,
+            notes: notes,
+            reporter: 'Dr. S. Jamir (DDMA Kohima)'
+          })
+        });
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        const result = await res.json();
+
+        const successBox = document.getElementById('field-report-success-box');
+        if (successBox) {
+          successBox.classList.remove('hidden');
+          successBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        showToast(`✓ ${result.message}`);
+      } catch (err) {
+        showToast('⚠️ Submission failed: ' + err.message);
+      }
+    }
+
+    function riskBadgeClasses(tier) {
+      const t = String(tier || '').toUpperCase();
+      if (t === 'CRITICAL') return 'bg-error-container text-on-error-container';
+      if (t === 'HIGH') return 'bg-orange-100 text-orange-800';
+      if (t === 'MODERATE') return 'bg-amber-100 text-amber-800';
+      return 'bg-emerald-100 text-emerald-800';
+    }
+
+    function updateRiskAnalysisUI(data) {
+      const risk = data?.risk || {};
+      const score = Number(risk.risk_score ?? 0);
+      const tier = risk.risk_tier || 'UNKNOWN';
+      const rainfall = Number(data.rainfall_24h ?? 0);
+      const scoreEl = document.getElementById('risk-analysis-score');
+      const tierEl = document.getElementById('risk-analysis-tier');
+      const ringEl = document.getElementById('risk-analysis-ring');
+      const rainfallEl = document.getElementById('risk-analysis-rainfall');
+      if (scoreEl) scoreEl.textContent = score.toFixed(2);
+      if (tierEl) { tierEl.textContent = tier; tierEl.className = `text-[10px] font-mono font-bold uppercase ${riskBadgeClasses(tier)}`; }
+      if (ringEl) ringEl.setAttribute('stroke-dasharray', `${score}, 100`);
+      if (rainfallEl) rainfallEl.textContent = `${rainfall.toFixed(2)} mm / 24h`;
+
+      const rainfallWeight = document.getElementById('risk-analysis-rainfall-weight');
+      if (rainfallWeight) rainfallWeight.textContent = `${risk.components?.rainfall_score ?? 0}% normalized score`;
+      const slopeWeight = document.getElementById('risk-analysis-slope-weight');
+      if (slopeWeight) slopeWeight.textContent = `${risk.components?.slope_score ?? 0}% normalized score`;
+      const insarWeight = document.getElementById('risk-analysis-insar-weight');
+      if (insarWeight) insarWeight.textContent = `${risk.components?.insar_score ?? 0}% normalized score`;
+    }
+
+    function setDashboardRiskStyle(el, score) {
+      if (!el) return;
+      el.className = 'text-xs font-mono font-bold px-1.5 py-0.5 rounded text-white';
+      if (score >= 80) el.classList.add('bg-error');
+      else if (score >= 60) el.classList.add('bg-orange-500');
+      else el.classList.add('bg-amber-500');
+    }
+
+    function updateDashboardZones(zones) {
+      const critical = zones.filter(z => Number(z.risk_score) >= 80).length;
+      const high = zones.filter(z => Number(z.risk_score) >= 60 && Number(z.risk_score) < 80).length;
+      const criticalEl = document.getElementById('dash-critical-zones');
+      const highEl = document.getElementById('dash-high-risk-zones');
+      if (criticalEl) criticalEl.textContent = critical;
+      if (highEl) highEl.textContent = high;
+
+      const ordered = [...zones].sort((a,b) => Number(b.risk_score) - Number(a.risk_score));
+      const ids = ['a','b','c'];
+      ordered.slice(0,3).forEach((zone, index) => {
+        const score = Number(zone.risk_score || 0);
+        const nameEl = document.getElementById(`dash-threat-${ids[index]}-name`);
+        const scoreEl = document.getElementById(`dash-threat-${ids[index]}-score`);
+        if (nameEl) nameEl.textContent = `#0${index + 1} ${zone.name}`;
+        if (scoreEl) { scoreEl.textContent = `${score.toFixed(2)}/100`; setDashboardRiskStyle(scoreEl, score); }
+      });
+
+      const zoneA = zones.find(z => z.id === 'zone-a');
+      const zoneB = zones.find(z => z.id === 'zone-b');
+      const zoneAName = document.getElementById('dash-zone-a-name');
+      const zoneABadge = document.getElementById('dash-zone-a-badge');
+      const zoneBLabel = document.getElementById('dash-zone-b-label');
+      if (zoneA) {
+        if (zoneAName) zoneAName.textContent = `${zoneA.name} • ${zoneA.risk_level}`;
+        if (zoneABadge) zoneABadge.textContent = `${zoneA.risk_level} ${Number(zoneA.risk_score).toFixed(2)}/100`;
+      }
+      if (zoneB && zoneBLabel) zoneBLabel.textContent = `${zoneB.name} — ${Number(zoneB.risk_score).toFixed(2)}/100`;
+    }
+
+    async function loadLiveDashboardData() {
     try {
-        const res = await fetch('http://127.0.0.1:8000/api/alerts', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                zone_id: 'zone-a',
-                severity: selectedAlertSeverity,
-                title: 'Mandatory Evacuation: Kohima South Ridge (NH-29 km 14.8)',
-                message: 'EMERGENCY LANDSLIDE WARNING (GeoSentinel/SDMA): Severe slope failure imminent.',
-                channels: [
-                    'sms',
-                    'vhf',
-                    'ndma_sachet',
-                    'siren'
-                ]
-            })
+
+        const zonesRes = await fetch(
+            `${API_BASE_URL}/api/zones`
+        );
+
+        if (!zonesRes.ok) {
+            throw new Error(
+                `Zones API returned ${zonesRes.status}`
+            );
+        }
+
+        const zonesData = await zonesRes.json();
+
+        updateDashboardZones(
+            zonesData.zones || []
+        );
+
+
+        const dashRes = await fetch(
+            `${API_BASE_URL}/api/dashboard`
+        );
+
+        if (!dashRes.ok) {
+            throw new Error(
+                `Dashboard API returned ${dashRes.status}`
+            );
+        }
+
+        const dash = await dashRes.json();
+
+
+        const active =
+            document.getElementById(
+                'dash-active-alerts'
+            );
+
+        const villages =
+            document.getElementById(
+                'dash-villages-at-risk'
+            );
+
+        const roads =
+            document.getElementById(
+                'dash-road-segments'
+            );
+
+        const population =
+            document.getElementById(
+                'dash-exposed-population'
+            );
+
+
+        if (active) {
+            active.textContent =
+                dash.active_alerts ?? 0;
+        }
+
+        if (villages) {
+            villages.textContent =
+                dash.villages_at_risk ?? 0;
+        }
+
+        if (roads) {
+            roads.textContent =
+                dash.road_segments_at_risk ?? 0;
+        }
+
+        if (population) {
+            population.textContent =
+                Number(
+                    dash.total_exposed_population ?? 0
+                ).toLocaleString();
+        }
+
+
+        console.log(
+            'Live dashboard data loaded:',
+            dash
+        );
+
+    } catch (err) {
+
+        console.error(
+            'Live dashboard load failed:',
+            err
+        );
+
+        showToast(
+            '⚠️ Live dashboard data unavailable'
+        );
+    }
+}
+
+    // Scenario Simulator Engine
+
+    function updateSimUI(d, val) {
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = value;
+      };
+
+      setText('sim-slider-label', `${val} mm/24h`);
+      setText('sim-val-risk', Number(d.risk).toFixed(2));
+
+      const bRisk = document.getElementById('sim-badge-risk');
+      if (bRisk) {
+        bRisk.className = `px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${d.riskBg}`;
+        bRisk.innerText = d.riskTier;
+      }
+
+      setText('sim-val-fos', d.fos);
+      const bFos = document.getElementById('sim-badge-fos');
+      if (bFos) bFos.innerText = d.fosTier;
+
+      setText('sim-val-pwp', d.pwp);
+      setText('sim-val-vwc', d.vwc);
+
+      setText('sim-badge-hamlets', d.hamlets);
+      setText('sim-val-souls', d.souls);
+      setText('sim-val-evac', d.evacText);
+
+      setText('sim-val-cutoff', d.cutoff);
+      setText('sim-badge-highway', d.highway);
+      setText('sim-val-priority', d.priority);
+
+      const zoneStatus = document.getElementById('sim-zone-status');
+      if (zoneStatus) {
+        zoneStatus.innerText = `${d.zoneName} • Backend simulation`;
+      }
+
+      const ell = document.getElementById('sim-runout-ellipse');
+      if (ell) {
+        ell.setAttribute('rx', d.radius);
+        ell.setAttribute('ry', Math.round(d.radius * 0.65));
+      }
+
+      const s0 = document.getElementById('sim-cone-stop0');
+      const s1 = document.getElementById('sim-cone-stop1');
+      const s2 = document.getElementById('sim-cone-stop2');
+
+      if (s0 && s1 && s2) {
+        s0.setAttribute('stop-color', d.color);
+        s1.setAttribute('stop-color', d.color);
+        s2.setAttribute('stop-color', d.color);
+      }
+
+      setText('sim-map-area', d.area);
+      setText('sim-choke-status', d.chokeText);
+      setText('sim-narrative-text', d.narrative);
+    }
+
+    function tierBg(tier) {
+      const t = String(tier || '').toLowerCase();
+
+      if (t.includes('critical')) {
+        return 'bg-error-container text-on-error-container';
+      }
+
+      if (t.includes('high')) {
+        return 'bg-orange-100 text-orange-800';
+      }
+
+      if (t.includes('moderate')) {
+        return 'bg-amber-100 text-amber-800';
+      }
+
+      return 'bg-emerald-100 text-emerald-800';
+    }
+
+    function tierColor(risk) {
+      if (risk >= 80) return '#dc2626';
+      if (risk >= 60) return '#ea580c';
+      if (risk >= 40) return '#f59e0b';
+      return '#16a34a';
+    }
+
+    function adaptSimResponse(r) {
+      const priority = Number(r.priority);
+
+      let evacText = `${Number(r.evac || 0).toLocaleString()} souls`;
+
+      if (priority === 1) {
+        evacText = `MANDATORY • ${Number(r.evac || 0).toLocaleString()} souls`;
+      } else if (priority === 2) {
+        evacText = `Stage 1 • ${Number(r.evac || 0).toLocaleString()} souls`;
+      } else if (priority === 3) {
+        evacText = `Preparedness • ${Number(r.evac || 0).toLocaleString()} souls`;
+      }
+
+      return {
+        zoneName: r.zone_name || r.zone_id,
+        risk: Number(r.risk || 0),
+        riskTier: r.risk_tier || 'UNKNOWN',
+        riskBg: tierBg(r.risk_tier),
+        fos: Number(r.fos || 0).toFixed(2),
+        fosTier: r.fos_tier || 'UNKNOWN',
+        pwp: `${r.pwp_kpa ?? 0} kPa`,
+        vwc: `${r.vwc_pct ?? 0}% VWC`,
+        hamlets: `${r.hamlets ?? 0} Hamlets`,
+        souls: Number(r.souls || 0).toLocaleString(),
+        evacText,
+        cutoff: `${r.cutoff_pct ?? 0}%`,
+        highway: r.highway_status || 'UNKNOWN',
+        priority:
+          priority === 1
+            ? 'Priority 1 (Mandatory Evac)'
+            : priority === 2
+              ? 'Priority 2 (Stage SDRF)'
+              : priority === 3
+                ? 'Priority 3 (Preparedness)'
+                : 'Priority 4 (Monitor)',
+        radius: Number(r.runout_radius || 0),
+        area: `${r.runout_area ?? 0} km² Runout Extent`,
+        chokeText: r.highway_status || 'UNKNOWN',
+        color: tierColor(Number(r.risk || 0)),
+        narrative: r.narrative || 'No scenario narrative returned.'
+      };
+    }
+
+    let simDebounceTimer = null;
+    let simRequestCounter = 0;
+
+    async function fetchSimulation(rainfallMm) {
+      const requestId = ++simRequestCounter;
+
+      const zoneSelect = document.getElementById('sim-zone-select');
+      const zoneId = zoneSelect?.value || 'zone-a';
+      const rainfall = Number(rainfallMm);
+
+      const status = document.getElementById('sim-zone-status');
+      if (status) {
+        status.innerText = 'Calculating from backend…';
+      }
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/scenarios/simulate`, {
+
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            rainfall_mm: rainfall,
+            zone_id: zoneId
+          })
         });
 
         if (!res.ok) {
-            throw new Error(`Server returned ${res.status}`);
+          const detail = await res.text();
+          throw new Error(`Server returned ${res.status}: ${detail}`);
         }
 
-        const alert = await res.json();
+        const r = await res.json();
 
-        // Close alert modal
-        closeModal('alert-modal');
+        // Ignore an older response if the user has already moved the slider again.
+        if (requestId !== simRequestCounter) return;
 
-        // Show success message
-        showToast(
-            `🚨 Alert ${alert.alert?.id || alert.id || 'created'} authorized & transmitted.`
+        updateSimUI(adaptSimResponse(r), Math.round(rainfall));
+
+      } catch (err) {
+        if (requestId !== simRequestCounter) return;
+
+        if (status) {
+          status.innerText = 'Backend simulation unavailable';
+        }
+
+        showToast('⚠️ Simulation failed: ' + err.message);
+      }
+    }
+
+    function onSimSliderMove(val) {
+      const v = Number(val);
+
+      const label = document.getElementById('sim-slider-label');
+      if (label) {
+        label.innerText = `${Math.round(v)} mm/24h`;
+      }
+
+      clearTimeout(simDebounceTimer);
+
+      simDebounceTimer = setTimeout(() => {
+        fetchSimulation(v);
+      }, 150);
+    }
+
+    function onSimZoneChange(zoneId) {
+      const slider = document.getElementById('sim-rainfall-slider');
+      const rainfall = slider ? Number(slider.value) : 100;
+
+      fetchSimulation(rainfall);
+
+      const zoneNames = {
+        'zone-a': 'Kohima Zone A',
+        'zone-b': 'Zubza Valley Zone B',
+        'zone-c': 'Medziphema Zone C'
+      };
+
+      showToast(
+        `Simulation zone changed to ${zoneNames[zoneId] || zoneId}`
+      );
+    }
+
+    function setSimPreset(mm) {
+      const slider = document.getElementById('sim-rainfall-slider');
+
+      if (slider) {
+        slider.value = mm;
+      }
+
+      ['50', '100', '150'].forEach(id => {
+        const btn = document.getElementById(`sim-btn-${id}`);
+
+        if (!btn) return;
+
+        if (Number(id) === Number(mm)) {
+          btn.className =
+            'px-3 py-1 rounded text-xs font-mono font-bold transition-all bg-primary text-on-primary shadow-sm';
+        } else {
+          btn.className =
+            'px-3 py-1 rounded text-xs font-mono font-bold transition-all bg-surface-container text-on-surface';
+        }
+      });
+
+      const label = document.getElementById('sim-slider-label');
+
+      if (label) {
+        label.innerText = `${Number(mm)} mm/24h`;
+      }
+
+      fetchSimulation(Number(mm));
+    }
+
+    async function updateResponseCenterForLocation(monitoringData) {
+    const priorityEl = document.getElementById('dash-threat-a-priority');
+    const factorEl = document.getElementById('dash-threat-a-factor');
+    const nameEl = document.getElementById('dash-threat-a-name');
+    const locationEl = document.getElementById('dash-threat-a-location');
+    const scoreEl = document.getElementById('dash-threat-a-score');
+
+    if (!priorityEl || !factorEl || !nameEl || !locationEl || !scoreEl) {
+        console.warn('Response Center elements not found');
+        return;
+    }
+
+    // --------------------------------------------------
+    // No monitored zones
+    // --------------------------------------------------
+
+    if (
+        monitoringData.monitoring_status !== 'MONITORED' ||
+        !monitoringData.zones ||
+        monitoringData.zones.length === 0
+    ) {
+        priorityEl.textContent = 'REGIONAL COVERAGE';
+        factorEl.textContent = 'No active monitoring zones';
+
+        nameEl.textContent =
+            `${monitoringData.location_name} District`;
+
+        locationEl.textContent =
+            `${monitoringData.state} • Administrative coverage active`;
+
+        scoreEl.textContent = '—';
+
+        // Make it visually neutral instead of showing
+        // the old critical state.
+        priorityEl.className =
+            'px-2 py-0.5 rounded bg-surface-container-high text-secondary text-[10px] font-mono font-bold uppercase';
+
+        scoreEl.className =
+            'text-3xl font-extrabold text-secondary';
+
+        return;
+    }
+
+    // --------------------------------------------------
+    // Monitored location
+    // --------------------------------------------------
+
+    const zoneIds = monitoringData.zones.map(zone => zone.id);
+
+    try {
+        // Get live zone data so rainfall/risk is recalculated
+        // by the backend.
+        const response = await fetch(
+            `${API_BASE_URL}/api/zones`
         );
 
-        // Refresh dashboard numbers
-        loadDashboardMetrics();
-        loadAlerts();
+        if (!response.ok) {
+            throw new Error('Failed to load live zone data');
+        }
+
+        const data = await response.json();
+
+        const matchingZones = data.zones.filter(
+            zone => zoneIds.includes(zone.id)
+        );
+
+        if (matchingZones.length === 0) {
+            throw new Error('No matching monitoring zones found');
+        }
+
+        // Highest-risk zone first
+        matchingZones.sort(
+            (a, b) => b.risk_score - a.risk_score
+        );
+
+        const zone = matchingZones[0];
+
+        // --------------------------------------------------
+        // Priority
+        // --------------------------------------------------
+
+        let priorityText = 'PRIORITY 04 LOW';
+
+        if (zone.risk_level === 'CRITICAL') {
+            priorityText = 'PRIORITY 01 CRITICAL';
+        } else if (zone.risk_level === 'HIGH') {
+            priorityText = 'PRIORITY 02 HIGH';
+        } else if (zone.risk_level === 'MODERATE') {
+            priorityText = 'PRIORITY 03 MODERATE';
+        }
+
+        priorityEl.textContent = priorityText;
+
+        // --------------------------------------------------
+        // Main threat information
+        // --------------------------------------------------
+
+        nameEl.textContent =
+            `${zone.name} (${zone.location})`;
+
+        locationEl.textContent =
+            `${Number(zone.latitude).toFixed(4)}° N, ` +
+            `${Number(zone.longitude).toFixed(4)}° E • ` +
+            `${monitoringData.location_name} District`;
+
+        scoreEl.textContent = zone.risk_score;
+
+        factorEl.textContent =
+            `Rainfall ${zone.rainfall_24h} mm • ` +
+            `InSAR Creep ${zone.insar_creep}`;
+
+        // --------------------------------------------------
+        // Risk styling
+        // --------------------------------------------------
+
+        if (zone.risk_level === 'CRITICAL') {
+            priorityEl.className =
+                'px-2 py-0.5 rounded bg-error text-on-primary text-[10px] font-mono font-bold uppercase';
+
+            scoreEl.className =
+                'text-3xl font-extrabold text-error';
+
+        } else if (zone.risk_level === 'HIGH') {
+            priorityEl.className =
+                'px-2 py-0.5 rounded bg-orange-500 text-on-primary text-[10px] font-mono font-bold uppercase';
+
+            scoreEl.className =
+                'text-3xl font-extrabold text-orange-600';
+
+        } else if (zone.risk_level === 'MODERATE') {
+            priorityEl.className =
+                'px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-mono font-bold uppercase';
+
+            scoreEl.className =
+                'text-3xl font-extrabold text-amber-600';
+
+        } else {
+            priorityEl.className =
+                'px-2 py-0.5 rounded bg-surface-container-high text-secondary text-[10px] font-mono font-bold uppercase';
+
+            scoreEl.className =
+                'text-3xl font-extrabold text-secondary';
+        }
+
+        console.log(
+            'Response Center updated:',
+            zone
+        );
 
     } catch (error) {
-        console.error('Alert transmission failed:', error);
+        console.error(
+            'Failed to update Response Center:',
+            error
+        );
 
-        showToast(
-            '⚠️ Alert failed to send: ' + error.message
+        nameEl.textContent =
+            `${monitoringData.location_name} District`;
+
+        locationEl.textContent =
+            'Unable to load live monitoring data';
+
+        scoreEl.textContent = '—';
+        priorityEl.textContent = 'DATA UNAVAILABLE';
+        factorEl.textContent = 'Backend monitoring unavailable';
+    }
+}
+
+async function loadSavedLocationData() {
+    try {
+        const saved = JSON.parse(
+            localStorage.getItem('geosentinel_location') || 'null'
+        );
+
+        if (!saved || !saved.location_id) {
+            console.log('No saved location found');
+            return;
+        }
+
+        console.log('Loading saved location:', saved.location_id);
+
+        const response = await fetch(
+            `${API_BASE_URL}/api/locations/${saved.location_id}/monitoring`
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Location API returned ${response.status}`
+            );
+        }
+
+        const monitoringData = await response.json();
+
+        window.geoSentinelSelectedLocation = monitoringData;
+
+        await updateLocationRiskViews(monitoringData);
+
+        await updateResponseCenterForLocation(
+            monitoringData
+        );
+
+        console.log(
+            'Saved location data loaded:',
+            monitoringData
+        );
+
+    } catch (error) {
+        console.error(
+            'Failed to restore location data:',
+            error
         );
     }
 }
 
-async function loadDashboardMetrics() {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/dashboard');
+async function updateLocationRiskViews(monitoringData) {
+    const mapName = document.getElementById('risk-map-zone-name');
+    const mapTier = document.getElementById('risk-map-tier');
+    const mapScore = document.getElementById('risk-map-score');
+    const mapPin = document.getElementById('risk-map-pin-label');
+    const analysisTitle = document.getElementById('risk-analysis-title');
 
-    if (!response.ok) {
-      throw new Error(`Server returned ${response.status}`);
+    if (monitoringData.monitoring_status !== 'MONITORED' || !monitoringData.zones?.length) {
+        const label = `${monitoringData.location_name}, ${monitoringData.state}`;
+        if (mapName) mapName.textContent = label;
+        if (mapTier) mapTier.textContent = 'REGIONAL COVERAGE';
+        if (mapScore) mapScore.textContent = '—';
+        if (mapPin) mapPin.textContent = 'No active monitoring zone';
+        if (analysisTitle) analysisTitle.textContent = `AI Risk Analysis: ${label} (regional coverage)`;
+        return;
     }
 
+    const zoneIds = monitoringData.zones.map(zone => zone.id);
+    const response = await fetch(`${API_BASE_URL}/api/zones`);
+    if (!response.ok) throw new Error(`Zones API returned ${response.status}`);
     const data = await response.json();
+    const zone = data.zones
+        .filter(item => zoneIds.includes(item.id))
+        .sort((a, b) => Number(b.risk_score) - Number(a.risk_score))[0];
+    if (!zone) return;
 
-    document.getElementById('critical-zones-count').innerText =
-      data.critical_zones;
+    window.geoSentinelSelectedZoneName = zone.name;
+    if (mapName) mapName.textContent = zone.name.toUpperCase();
+    if (mapTier) mapTier.textContent = `${zone.risk_level} RISK`;
+    if (mapScore) mapScore.innerHTML = `${Number(zone.risk_score).toFixed(2)} <span class="text-xs text-secondary">/ 100</span>`;
+    if (mapPin) mapPin.textContent = `${zone.name}: ${zone.risk_level}`;
+    if (analysisTitle) analysisTitle.textContent = `AI Risk Analysis & Contributing Factors: ${zone.name}`;
 
-    document.getElementById('high-risk-zones-count').innerText =
-      data.high_risk_zones;
-
-    document.getElementById('villages-at-risk-count').innerText =
-      data.villages_at_risk;
-
-    document.getElementById('road-segments-count').innerText =
-      data.road_segments_at_risk;
-
-    document.getElementById('active-alerts-count').innerText =
-      data.active_alerts;
-
-    document.getElementById('total-exposed-population').innerText =
-      data.total_exposed_population.toLocaleString();
-
-  } catch (error) {
-    console.error('Dashboard metrics failed:', error);
-  }
+    const riskResponse = await fetch(`${API_BASE_URL}/api/zones/${zone.id}/risk`);
+    if (riskResponse.ok) updateRiskAnalysisUI(await riskResponse.json());
 }
 
-loadDashboardMetrics();
 
-async function loadAlerts() {
+
+loadSavedLocationData()
+
+async function updateResponseCenterForLocation(monitoringData) {
+
+    const priorityEl =
+        document.getElementById('dash-threat-a-priority');
+
+    const factorEl =
+        document.getElementById('dash-threat-a-factor');
+
+    const nameEl =
+        document.getElementById('dash-threat-a-name');
+
+    const locationEl =
+        document.getElementById('dash-threat-a-location');
+
+    const scoreEl =
+        document.getElementById('dash-threat-a-score');
+
+
+    // Check that the Response Center elements exist
+    if (
+        !priorityEl ||
+        !factorEl ||
+        !nameEl ||
+        !locationEl ||
+        !scoreEl
+    ) {
+        console.warn(
+            'Response Center elements not found'
+        );
+
+        return;
+    }
+
+
+    // ==========================================
+    // NO ACTIVE MONITORING ZONES
+    // ==========================================
+
+    if (
+        monitoringData.monitoring_status !== 'MONITORED' ||
+        !monitoringData.zones ||
+        monitoringData.zones.length === 0
+    ) {
+
+        priorityEl.textContent =
+            'REGIONAL COVERAGE';
+
+        factorEl.textContent =
+            'No active monitoring zones';
+
+        nameEl.textContent =
+    `${monitoringData.location_name} District`;
+
+        locationEl.textContent =
+            `${monitoringData.state} • Administrative coverage active`;
+
+        scoreEl.textContent = '—';
+
+
+        priorityEl.className =
+            'px-2 py-0.5 rounded bg-surface-container-high text-secondary text-[10px] font-mono font-bold uppercase';
+
+        scoreEl.className =
+            'text-3xl font-extrabold text-secondary';
+
+        return;
+    }
+
+
+    // ==========================================
+    // GET LIVE ZONE DATA
+    // ==========================================
+
     try {
+
         const response = await fetch(
-            'http://127.0.0.1:8000/api/alerts'
+            `${API_BASE_URL}/api/zones`
         );
 
         if (!response.ok) {
-            throw new Error(`Server returned ${response.status}`);
+            throw new Error(
+                'Failed to load live zone data'
+            );
         }
 
         const data = await response.json();
 
-        console.log('Alerts loaded from backend:', data.alerts);
 
-        const container = document.getElementById('alerts-list');
+        // IDs belonging to selected location
+        const zoneIds =
+            monitoringData.zones.map(
+                zone => zone.id
+            );
 
-        if (!container) {
-            console.error('Alerts container not found');
-            return;
+
+        // Keep only zones belonging to selected location
+        const matchingZones =
+            data.zones.filter(
+                zone => zoneIds.includes(zone.id)
+            );
+
+
+        if (matchingZones.length === 0) {
+            throw new Error(
+                'No matching monitoring zones found'
+            );
         }
 
-        if (!data.alerts || data.alerts.length === 0) {
-            container.innerHTML = `
-                <div class="p-6 text-center text-on-surface-variant">
-                    No active alerts.
-                </div>
-            `;
-            return;
+
+        // Highest risk first
+        matchingZones.sort(
+            (a, b) => b.risk_score - a.risk_score
+        );
+
+
+        const zone = matchingZones[0];
+
+
+        // ==========================================
+        // PRIORITY
+        // ==========================================
+
+        let priorityText = 'PRIORITY 04 LOW';
+
+        if (zone.risk_level === 'CRITICAL') {
+
+            priorityText =
+                'PRIORITY 01 CRITICAL';
+
+        } else if (zone.risk_level === 'HIGH') {
+
+            priorityText =
+                'PRIORITY 02 HIGH';
+
+        } else if (zone.risk_level === 'MODERATE') {
+
+            priorityText =
+                'PRIORITY 03 MODERATE';
         }
 
-        container.innerHTML = data.alerts.map(alert => `
-            <div class="bg-surface-container-lowest rounded-2xl border border-surface-container-high p-5 mb-4 shadow-sm">
 
-                <div class="flex items-start justify-between gap-4">
+        priorityEl.textContent =
+            priorityText;
 
-                    <div class="flex items-start gap-4">
 
-                        <div class="w-11 h-11 rounded-xl bg-error-container text-error flex items-center justify-center shrink-0">
-                            <span class="material-symbols-outlined">
-                                emergency
-                            </span>
-                        </div>
+        // ==========================================
+        // ZONE INFORMATION
+        // ==========================================
 
-                        <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-error text-on-primary uppercase">
-                                    ${alert.severity}
-                                </span>
+        nameEl.textContent =
+            `${zone.name} (${zone.location})`;
 
-                                <span class="text-xs text-secondary font-mono">
-                                    Alert #${alert.id}
-                                </span>
-                            </div>
 
-                            <h3 class="text-base font-bold text-on-surface">
-                                ${alert.title}
-                            </h3>
+        locationEl.textContent =
+            `${Number(zone.latitude).toFixed(4)}° N, ` +
+            `${Number(zone.longitude).toFixed(4)}° E • ` +
+            `${monitoringData.location_name} District`;
 
-                            <p class="text-xs text-on-surface-variant mt-1">
-                                ${alert.message}
-                            </p>
 
-                            <p class="text-xs text-secondary mt-2">
-                                Zone: ${alert.zone_id}
-                            </p>
-                        </div>
+        scoreEl.textContent =
+            zone.risk_score;
 
-                    </div>
 
-                </div>
+        factorEl.textContent =
+            `Rainfall ${zone.rainfall_24h} mm • ` +
+            `InSAR Creep ${zone.insar_creep}`;
 
-            </div>
-        `).join('');
+
+        // ==========================================
+        // RISK COLORS
+        // ==========================================
+
+        if (zone.risk_level === 'CRITICAL') {
+
+            priorityEl.className =
+                'px-2 py-0.5 rounded bg-error text-on-primary text-[10px] font-mono font-bold uppercase';
+
+            scoreEl.className =
+                'text-3xl font-extrabold text-error';
+
+
+        } else if (zone.risk_level === 'HIGH') {
+
+            priorityEl.className =
+                'px-2 py-0.5 rounded bg-orange-500 text-on-primary text-[10px] font-mono font-bold uppercase';
+
+            scoreEl.className =
+                'text-3xl font-extrabold text-orange-600';
+
+
+        } else if (zone.risk_level === 'MODERATE') {
+
+            priorityEl.className =
+                'px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-mono font-bold uppercase';
+
+            scoreEl.className =
+                'text-3xl font-extrabold text-amber-600';
+
+
+        } else {
+
+            priorityEl.className =
+                'px-2 py-0.5 rounded bg-surface-container-high text-secondary text-[10px] font-mono font-bold uppercase';
+
+            scoreEl.className =
+                'text-3xl font-extrabold text-secondary';
+        }
+
+
+        console.log(
+            'Response Center updated:',
+            zone
+        );
+
 
     } catch (error) {
-        console.error('Failed to load alerts:', error);
-        showToast('⚠️ Failed to load alerts');
+
+        console.error(
+            'Failed to update Response Center:',
+            error
+        );
+
+        nameEl.textContent =
+            `${monitoringData.location_name} District`;
+
+        locationEl.textContent =
+            'Unable to load live monitoring data';
+
+        scoreEl.textContent =
+            '—';
+
+        priorityEl.textContent =
+            'DATA UNAVAILABLE';
+
+        factorEl.textContent =
+            'Backend monitoring unavailable';
     }
 }
 
-async function submitFieldReport() {
-    const location = document.getElementById('field-input-location').value;
-    const type = document.getElementById('field-input-type').value;
-    const notes = document.getElementById('field-input-notes').value;
-
-    try {
-        const response = await fetch(
-            'http://127.0.0.1:8000/api/field-reports',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    zone_id: 'zone-a',
-                    severity: 'Critical',
-                    type: type,
-                    location: location,
-                    notes: notes,
-                    reporter: 'Dr. S. Jamir (DDMA Kohima)'
-                })
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error(`Server returned ${response.status}`);
-        }
-
-        const result = await response.json();
-
-        console.log('Field report submitted:', result);
-
-        const successBox = document.getElementById(
-            'field-report-success-box'
-        );
-
-        if (successBox) {
-            successBox.classList.remove('hidden');
-        }
-
-        alert('Field report submitted successfully!');
-
-    } catch (error) {
-        console.error('Field report submission failed:', error);
-        alert('Field report submission failed: ' + error.message);
+    // Toast helper
+    let toastTimer = null;
+    function showToast(text) {
+      const toast = document.getElementById('app-toast');
+      const msg = document.getElementById('toast-msg');
+      if (!toast || !msg) return;
+      msg.innerText = text;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3500);
     }
-}
 
-async function loadFieldReports() {
+    // Default start
+    document.addEventListener('DOMContentLoaded', () => {
+      try { const l=JSON.parse(localStorage.getItem('geosentinel_location')||'null'); if(l?.state&&l?.district) document.getElementById('header-location-label').textContent=`${l.district} District, ${l.state}`; const p=JSON.parse(localStorage.getItem('geosentinel_profile')||'null'); if(p?.name) document.getElementById('header-profile-name').textContent=p.name; if(p?.role) document.getElementById('header-profile-role').textContent=p.role; } catch(_) {}
+      loadLiveDashboardData();
+    
+
+      const simZone = document.getElementById('sim-zone-select');
+      if (simZone) simZone.value = 'zone-a';
+
+      setSimPreset(100);
+    });
+
+    
+
+async function loadSimulatorZones() {
     try {
-        const response = await fetch(
-            'http://127.0.0.1:8000/api/field-reports'
-        );
+        const response = await fetch(`${API_BASE_URL}/api/zones`);
 
         if (!response.ok) {
-            throw new Error(`Server returned ${response.status}`);
+            throw new Error("Failed to load zones");
         }
 
         const data = await response.json();
 
-        console.log('Field reports loaded from backend:', data.reports);
+        const zoneSelect = document.getElementById("sim-zone-select");
 
-        const container = document.getElementById('field-reports-list');
-
-        if (!container) {
-            console.error('Field reports container not found');
+        if (!zoneSelect) {
+            console.error("zoneSelect element not found");
             return;
         }
 
-        // Keep the section heading
-        const heading = `
-            <span class="text-xs font-mono uppercase font-bold text-secondary">
-                Verified Ground Truth Stream (${data.count} reports)
-            </span>
-        `;
+        // Clear existing hardcoded options
+        zoneSelect.innerHTML = "";
 
-        if (!data.reports || data.reports.length === 0) {
-            container.innerHTML = `
-                ${heading}
-                <div class="bg-surface-container-lowest p-6 rounded-xl border border-surface-container-high text-center text-on-surface-variant">
-                    No field reports submitted yet.
-                </div>
-            `;
-            return;
-        }
+        data.zones.forEach(zone => {
+            const option = document.createElement("option");
 
-        const reportsHTML = data.reports.map(report => `
-            <div class="bg-surface-container-lowest p-4 rounded-xl border border-surface-container-high shadow-sm flex flex-col gap-2">
+            option.value = zone.id;
+            option.textContent = zone.name;
 
-                <div class="flex justify-between items-start gap-3">
+            zoneSelect.appendChild(option);
+        });
 
-                    <div>
-                        <span class="px-2 py-0.5 rounded bg-error text-on-primary text-[10px] font-mono font-bold uppercase">
-                            ${report.severity} • VERIFIED
-                        </span>
-
-                        <span class="text-xs text-secondary font-mono ml-2">
-                            #REP-${String(report.id).padStart(4, '0')}
-                        </span>
-                    </div>
-
-                </div>
-
-                <h4 class="text-sm font-bold text-on-surface">
-                    ${report.type}
-                </h4>
-
-                <span class="text-xs text-secondary">
-                    ${report.reporter} • ${report.location}
-                </span>
-
-                <p class="text-sm text-on-surface-variant mt-1">
-                    ${report.notes}
-                </p>
-
-                <div class="text-xs text-secondary border-t border-surface-container-high pt-2">
-                    Zone: ${report.zone_id}
-                </div>
-
-            </div>
-        `).join('');
-
-        container.innerHTML = heading + reportsHTML;
+        console.log("Simulator zones loaded:", data.zones);
 
     } catch (error) {
-        console.error('Field reports loading failed:', error);
+        console.error("Error loading simulator zones:", error);
     }
 }
-loadFieldReports();
+loadSimulatorZones();
 
-</script>
+let selectedAlertSeverity = null;
 
-  <script>
-    // Navigation Router across all 7 screens
-    // Load risk zones from backend
-// Load risk zones from backend and display them on the map
-// ============================================================
-// NAVIGATION ROUTER
-// ============================================================
+function selectAlertSeverity(severity) {
 
-let currentRiskZoneId = 'zone-a';
+    selectedAlertSeverity = severity;
 
-// ============================================================
-// GEO SENTINEL - MAIN NAVIGATION
-// ============================================================
+    const yellow =
+        document.getElementById('alert-severity-yellow');
 
-function navigateTo(viewId) {
+    const orange =
+        document.getElementById('alert-severity-orange');
 
-  console.log("NAVIGATION CLICKED:", viewId);
+    const red =
+        document.getElementById('alert-severity-red');
 
-  // Get every screen
-  const screens = document.querySelectorAll(".screen-view");
 
-  // Hide every screen
-  screens.forEach(screen => {
-    screen.classList.remove("active");
-  });
+    if (!yellow || !orange || !red) {
+        return;
+    }
 
-  // Find requested screen
-  const target = document.getElementById("view-" + viewId);
 
-  if (!target) {
-    console.error("SCREEN NOT FOUND:", "view-" + viewId);
-    return;
-  }
+    // Reset all buttons
 
-  // Show requested screen
-  target.classList.add("active");
+    orange.className =
+        'p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center';
 
-  // Update sidebar buttons
-  const navButtons = document.querySelectorAll(
-    "#sidebar-nav .nav-item"
-  );
+    red.className =
+        'p-2 rounded-lg bg-surface-container text-on-surface font-semibold text-center';
 
-  navButtons.forEach(button => {
 
-    const buttonView = button.getAttribute("data-nav");
+    // Highlight selected severity
+    if (severity === 'YELLOW') {
 
-    if (buttonView === viewId) {
+        yellow.className =
+            'p-2 rounded-lg bg-amber-500 text-on-primary font-bold text-center';
 
-      button.className =
-        "nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-semibold text-left w-full bg-primary-container text-on-primary shadow-sm";
+    } else if (severity === 'ORANGE') {
+
+        orange.className =
+            'p-2 rounded-lg bg-orange-500 text-on-primary font-bold text-center';
+
+    } else if (severity === 'RED') {
+
+        red.className =
+            'p-2 rounded-lg bg-error text-on-primary font-bold text-center';
+    }
+
+
+    console.log(
+        'Selected alert severity:',
+        severity
+    );
+}
+
+function setAlertSeverityFromRisk(riskScore) {
+
+    let severity;
+
+    if (riskScore >= 60) {
+
+        severity = 'RED';
+
+    } else if (riskScore >= 40) {
+
+        severity = 'ORANGE';
 
     } else {
 
-      button.className =
-        "nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all font-medium text-left w-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface";
-
+        severity = 'YELLOW';
     }
 
-  });
 
-  // Scroll to top
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-
-  console.log("NAVIGATION SUCCESS:", viewId);
-}
-
-
-// ============================================================
-// SIDEBAR CLICK FALLBACK
-// ============================================================
-
-document.addEventListener("click", function(event) {
-
-  const button = event.target.closest(
-    "#sidebar-nav .nav-item"
-  );
-
-  if (!button) {
-    return;
-  }
-
-  event.preventDefault();
-
-  const viewId = button.getAttribute("data-nav");
-
-  if (!viewId) {
-    console.error("Sidebar button has no data-nav:", button);
-    return;
-  }
-
-  console.log("SIDEBAR BUTTON CLICK:", viewId);
-
-  navigateTo(viewId);
-
-});
-
-
-// ============================================================
-// BACKEND: LOAD RISK ZONES
-// ============================================================
-
-async function loadRiskZones() {
-
-  try {
-
-    const res = await fetch(
-      'http://127.0.0.1:8000/api/zones'
-    );
-
-    if (!res.ok) {
-      throw new Error(`Server returned ${res.status}`);
-    }
-
-    const data = await res.json();
+    selectAlertSeverity(severity);
 
     console.log(
-      'Risk zones loaded from backend:',
-      data.zones
+        `Risk ${riskScore} → ${severity}`
     );
+}
 
-    const container =
-      document.getElementById('dynamic-risk-markers');
+async function onAlertZoneChange(zoneId) {
 
-    if (!container) {
-
-      console.error(
-        'Risk marker container not found'
-      );
-
-      return;
-    }
-
-    // Clear old markers
-    container.innerHTML = '';
-
-    // Positions of zones on the SVG map
-    const markerPositions = {
-
-      'zone-a': {
-        left: '60%',
-        top: '42%'
-      },
-
-      'zone-b': {
-        left: '42%',
-        top: '55%'
-      },
-
-      'zone-c': {
-        left: '70%',
-        top: '68%'
-      }
-
-    };
-
-
-    // Create marker for every backend zone
-    data.zones.forEach(zone => {
-
-      const position =
-        markerPositions[zone.id];
-
-      if (!position) {
+    if (!zoneId) {
         return;
-      }
-
-
-      // Decide marker colour based on risk
-      let markerClass = 'bg-success';
-      let borderClass = 'border-success';
-
-      if (zone.risk_score >= 80) {
-
-        markerClass = 'bg-error';
-        borderClass = 'border-error';
-
-      } else if (zone.risk_score >= 60) {
-
-        markerClass = 'bg-warning';
-        borderClass = 'border-warning';
-
-      }
-
-
-      // Create marker element
-      const marker =
-        document.createElement('div');
-
-
-      marker.className =
-        'absolute bg-surface-container-lowest/95 backdrop-blur p-2 rounded shadow-lg border flex items-center gap-1.5 pointer-events-auto cursor-pointer';
-
-
-      marker.classList.add(borderClass);
-
-
-      marker.style.left =
-        position.left;
-
-      marker.style.top =
-        position.top;
-
-      marker.style.transform =
-        'translate(-50%, -50%)';
-
-
-      marker.innerHTML = `
-        <span
-          class="w-2.5 h-2.5 rounded-full ${markerClass} animate-pulse">
-        </span>
-
-        <span class="text-xs font-bold text-on-surface">
-          ${zone.name}
-        </span>
-      `;
-
-
-      // When marker is clicked,
-      // open Risk Analysis for that zone.
-      marker.addEventListener('click', () => {
-
-        currentRiskZoneId = zone.id;
-
-        navigateTo('risk-analysis');
-
-      });
-
-
-      container.appendChild(marker);
-
-    });
-
-
-  } catch (err) {
-
-    console.error(
-      'Failed to load risk zones:',
-      err
-    );
-
-    showToast(
-      '⚠️ Failed to load risk zones'
-    );
-
-  }
-
-}
-
-
-
-// ============================================================
-// BACKEND: LOAD RISK ANALYSIS
-// ============================================================
-
-async function loadRiskAnalysis(zoneId) {
-
-  try {
-
-    // Remember currently selected zone
-    currentRiskZoneId = zoneId;
-
-
-    // --------------------------------------------------------
-    // Get calculated risk from backend
-    // --------------------------------------------------------
-
-    const res = await fetch(
-      `http://127.0.0.1:8000/api/zones/${zoneId}/risk`
-    );
-
-
-    if (!res.ok) {
-
-      throw new Error(
-        `Server returned ${res.status}`
-      );
-
     }
 
+    try {
 
-    const data = await res.json();
-
-
-    console.log(
-      'Risk analysis loaded:',
-      data
-    );
-
-
-    // Backend returns:
-    //
-    // {
-    //   zone_id,
-    //   zone_name,
-    //   location,
-    //   risk: {
-    //      risk_score,
-    //      risk_tier,
-    //      components
-    //   }
-    // }
-
-
-    const risk =
-      data.risk || {};
-
-
-    // --------------------------------------------------------
-    // Get complete zone information
-    // --------------------------------------------------------
-
-    const zoneResponse =
-      await fetch(
-        `http://127.0.0.1:8000/api/zones/${zoneId}`
-      );
-
-
-    let zoneInfo = null;
-
-
-    if (zoneResponse.ok) {
-
-      zoneInfo =
-        await zoneResponse.json();
-
-    }
-
-
-    // --------------------------------------------------------
-    // UPDATE ZONE NAME
-    // --------------------------------------------------------
-
-    const zoneNameEl =
-      document.getElementById(
-        'risk-zone-name'
-      );
-
-
-    if (zoneNameEl) {
-
-      zoneNameEl.innerText =
-        (data.zone_name || 'Unknown Zone')
-          .toUpperCase();
-
-    }
-
-
-    // --------------------------------------------------------
-    // UPDATE RISK ANALYSIS TITLE
-    // --------------------------------------------------------
-
-    const titleEl =
-      document.getElementById(
-        'risk-analysis-title'
-      );
-
-
-    if (titleEl) {
-
-      titleEl.innerText =
-        `AI Risk Analysis & Contributing Factors: ${
-          data.zone_name || 'Unknown Zone'
-        }`;
-
-    }
-
-
-    // --------------------------------------------------------
-    // UPDATE RISK SCORE
-    // --------------------------------------------------------
-
-    const riskScoreEl =
-      document.getElementById(
-        'risk-score'
-      );
-
-
-    if (riskScoreEl) {
-
-      riskScoreEl.innerText =
-        Math.round(
-          risk.risk_score ?? 0
+        console.log(
+            'Loading alert data for zone:',
+            zoneId
         );
 
+
+        const response = await fetch(
+            `${API_BASE_URL}/api/zones/${zoneId}`
+        );
+
+
+        if (!response.ok) {
+            throw new Error(
+                `Zone API returned ${response.status}`
+            );
+        }
+
+
+        const zone = await response.json();
+
+
+        // Store selected zone
+        window.geoSentinelSelectedAlertZone =
+            zone;
+
+
+        // Set severity based on live risk
+        setAlertSeverityFromRisk(
+            Number(zone.risk_score)
+        );
+
+
+        console.log(
+            'Alert zone loaded:',
+            zone
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            'Failed to load alert zone:',
+            error
+        );
+
+        showToast(
+            'Unable to load live risk for selected zone'
+        );
     }
-
-
-    // --------------------------------------------------------
-    // UPDATE RISK TIER
-    // --------------------------------------------------------
-
-    const riskTierEl =
-      document.getElementById(
-        'risk-tier'
-      );
-
-
-    if (riskTierEl) {
-
-      riskTierEl.innerText =
-        risk.risk_tier || 'UNKNOWN';
-
-    }
-
-
-    // --------------------------------------------------------
-    // UPDATE AI CONFIDENCE
-    // --------------------------------------------------------
-
-    const confidenceEl =
-      document.getElementById(
-        'risk-confidence'
-      );
-
-
-    if (
-      confidenceEl &&
-      zoneInfo
-    ) {
-
-      confidenceEl.innerText =
-        `${zoneInfo.ai_confidence}% AI Conf.`;
-
-    }
-
-
-    // --------------------------------------------------------
-    // UPDATE RAINFALL
-    // --------------------------------------------------------
-
-    const rainfallEl =
-      document.getElementById(
-        'risk-rainfall'
-      );
-
-
-    if (
-      rainfallEl &&
-      zoneInfo
-    ) {
-
-      rainfallEl.innerText =
-        `${zoneInfo.rainfall_24h} mm`;
-
-    }
-
-
-    // --------------------------------------------------------
-    // UPDATE SLOPE
-    // --------------------------------------------------------
-
-    const slopeEl =
-      document.getElementById(
-        'risk-slope'
-      );
-
-
-    if (
-      slopeEl &&
-      zoneInfo
-    ) {
-
-      slopeEl.innerText =
-        `${zoneInfo.slope_degree}°`;
-
-    }
-
-
-    // --------------------------------------------------------
-    // UPDATE INSAR CREEP
-    // --------------------------------------------------------
-
-    const insarEl =
-      document.getElementById(
-        'risk-insar'
-      );
-
-
-    if (
-      insarEl &&
-      zoneInfo
-    ) {
-
-      insarEl.innerText =
-        `${zoneInfo.insar_creep} mm/h`;
-
-    }
-
-
-    // --------------------------------------------------------
-    // UPDATE EXPOSED POPULATION
-    // --------------------------------------------------------
-
-    const populationEl =
-      document.getElementById(
-        'risk-population'
-      );
-
-
-    if (
-      populationEl &&
-      zoneInfo
-    ) {
-
-      populationEl.innerText =
-        `${zoneInfo.exposed_population.toLocaleString()} residents`;
-
-    }
-
-
-    console.log(
-      `Opening Risk Analysis for: ${zoneId}`
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      'Failed to load Risk Analysis:',
-      error
-    );
-
-    showToast(
-      '⚠️ Failed to load Risk Analysis'
-    );
-
-  }
-
 }
 
-
-
-// ============================================================
-// OPEN RISK ANALYSIS FROM ZONE / MAP
-// ============================================================
-
-function navigateToRiskAnalysis(zoneName) {
-
-  const zoneMap = {
-
-    "Kohima South Sector (NH-29 Bypass)":
-      "zone-a",
-
-    "Dzükou Approach Slope":
-      "zone-b",
-
-    "Zubza Riverbank Cut":
-      "zone-b",
-
-    "Kohima Zone A":
-      "zone-a",
-
-    "Zubza Valley Zone B":
-      "zone-b",
-
-    "Medziphema Zone C":
-      "zone-c"
-
-  };
-
-
-  // If zoneName is already a zone ID,
-  // use it directly.
-  const zoneId =
-    zoneMap[zoneName] ||
-    (
-      ['zone-a', 'zone-b', 'zone-c']
-        .includes(zoneName)
-        ? zoneName
-        : 'zone-a'
-    );
-
-
-  currentRiskZoneId =
-    zoneId;
-
-
-  // Open Risk Analysis page
-  navigateTo(
-    'risk-analysis'
-  );
-
-}
-
-
-
-// ============================================================
-// END OF BACKEND RISK ANALYSIS BLOCK
-// ============================================================
+  </script>
+</body>
+</html>

@@ -6,6 +6,7 @@ from app.database.connection import Base, engine
 
 from app.models.alerts import Alert
 from app.models.field_reports import FieldReport
+from app.models.zones import Zone
 
 from app.api.field_reports import router as field_reports_router
 from app.api.zones import router as zones_router
